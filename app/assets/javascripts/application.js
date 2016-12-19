@@ -15,5 +15,3 @@
 //= require phaser.min.js
 //= require phaser-plugin-isometric.min.js
 //= require_tree .
-var phaser = new Phaser.Game();
-// console.log( "Please let me get Phaser" );
