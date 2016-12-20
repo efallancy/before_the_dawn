@@ -7,7 +7,9 @@
 // 6. Transparent ( referring to the background whether to have a transparent or not )
 // 7. Antialias ( Drawing of the image texture. Default is true unless if you're going to have pixel art, then go for false )
 // 8. physicsConfig ( Physics configuration object to pass to the Physics world upon creation )
-var ghost = new Phaser.Game( 1200, 600, Phaser.AUTO, "ghost", { preload: preload, create: create, update: update, render: render }, true );
+$( document ).ready( function () {
+  if ( $( "#ghost" ).length ) {
+    var ghost = new Phaser.Game( 1200, 600, Phaser.AUTO, "ghost", { preload: preload, create: create, update: update, render: render }, true );
 
 var cursors, ghosts, spawned = 0;
 var hasCreatedOwnGhost = false;
@@ -203,3 +205,5 @@ var spawnLittle = function () {
 
 // game.state.add('Boot', BasicGame.Boot);
 // game.state.start('Boot');
+}
+} );
