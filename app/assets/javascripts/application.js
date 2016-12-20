@@ -15,4 +15,5 @@
 //= require phaser.min.js
 //= require phaser-plugin-isometric.min.js
 //= require ghost
+//= require leap
 // require_tree .
