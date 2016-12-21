@@ -1,5 +1,8 @@
 class PagesController < ApplicationController
-  def home
+  def ghost
+  end
+
+  def leap
   end
 
   def about

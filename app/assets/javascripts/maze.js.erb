@@ -1,141 +1,141 @@
-var maze = new Phaser.Game( 800, 600, Phaser.AUTO, "maze", { preload: preload, create: create, update: update, render: render }, false );
-
-var isoGroup, cursors, walls;
-
-function preload () {
-  maze.load.tilemap( 'floor', '<%= asset_path( "assets/mazeup_Floor.csv" ) %>', null, Phaser.Tilemap.CSV );
-  maze.load.image( 'tile', '<%= asset_path( "assets/stone_n.png" ) %>' );
-  maze.load.image( 'wall', '<%= asset_path( "assets/stonewall_n.png" ) %>' );
-  maze.load.spritesheet('hero', '<%= asset_path("assets/hero.png") %>', 45, 48);
-
-  maze.time.advancedTiming = true;
-
-  // Add and enable the plug-in.
-  maze.plugins.add( new Phaser.Plugin.Isometric( maze ) );
-
-  // Start the IsoArcade physics system.
-  maze.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
-
-  // This is used to set a maze canvas-based offset for the 0, 0, 0 isometric coordinate - by default
-  // this point would be at screen coordinates 0, 0 (top left) which is usually undesirable.
-  maze.iso.anchor.setTo(0.5, 0.2);
-}
-
-
-function create () {
-  isoGroup = maze.add.group();
-  walls = maze.add.group();
-
-
-  var tileArray = [];
-  var tiles = [
-                4, 4, 4, 4, 4, 5, 4, 4, 4, 8,
-                10, -1, -1, -1, 8, -1, 8, 1, -1, 6,
-                10, -1, 6, -1, 8, 9, 9, 9, -1, 2,
-                10, -1, 3, 1, 0, -1, 0, -1, -1, 6,
-                7, 4, -1, -1, -1, -1, -1, -1, -1, 8,
-                10, -1, -1, 4, 4, 7, 6, 9, -1, 6,
-                10, -1, 3, -1, -1, 7, -1, -1, -1, 8,
-                4, 4, 4, -1, -1, -1, -1, 9, 9, 9,
-                7, -1, -1, -1, 7, 9, 9, 7, -1, 8,
-                10, 0, 4, 4, -1, -1, -1, -1, -1, 8
-              ];
-
-  var size = 16;
-
-  var i = 0, tile;
-  for (var y = size; y <= maze.physics.isoArcade.bounds.frontY - ( Math.abs( size ) ); y += ( Math.abs(size) ) ) {
-      for (var x = size; x <= maze.physics.isoArcade.bounds.frontX - ( Math.abs( size ) ); x += ( Math.abs( size ) ) ) {
-          tile = maze.add.isoSprite( x, y, 0, "tile", null, isoGroup );
-          tile.anchor.set( 0.5, 0.5 );
-          tile.smoothed = false;
-      }
-  }
-
-  // Let's make a load of cubes on a grid, but do it back-to-front so they get added out of order.
-  var wall;
-  for (var xx = 300; xx > 0; xx -= 80) {
-      for (var yy = 300; yy > 0; yy -= 80) {
-          // Create a wall using the new game.add.isoSprite factory method at the specified position.
-          // The last parameter is the group you want to add it to (just like game.add.sprite)
-          wall = maze.add.isoSprite( xx, yy, 3, 'wall', 0, walls );
-          wall.anchor.set(0.5);
-
-          // Enable the physics body on this wall.
-          maze.physics.isoArcade.enable( wall );
-          wall.body.immovable = true;
-
-
-          // Collide with the world bounds so it doesn't go falling forever or fly off the screen!
-          // wall.body.collideWorldBounds = true;
-          //
-          // // Add a full bounce on the x and y axes, and a bit on the z axis.
-          // wall.body.bounce.set(0, 0, 0);
-          //
-          // // Add some X and Y drag to make walls slow down after being pushed.
-          // wall.body.drag.set(0, 0, 0);
-      }
-  }
-
-
-  player = maze.add.isoSprite(128, 128, 1, 'hero', 4);
-
-  //  Our two animations, walking left and right.
-  player.animations.add('right', [0, 1, 2, 3], 10, true);
-  player.animations.add('left', [5, 6, 7, 8], 10, true);
-
-  console.log( player.animations );
-  player.name = "player";
-
-
-  player.anchor.set( 0.5 );
-  maze.physics.isoArcade.enable( player );
-  player.body.collideWorldBounds = true;
-
-  cursors = maze.input.keyboard.createCursorKeys();
-
-  maze.input.keyboard.addKeyCapture([
-      Phaser.Keyboard.LEFT,
-      Phaser.Keyboard.RIGHT,
-      Phaser.Keyboard.UP,
-      Phaser.Keyboard.DOWN,
-      Phaser.Keyboard.SPACEBAR
-  ]);
-
-}
-
-function update () {
-  maze.physics.isoArcade.collide( player, walls, function () { console.log( "Collided" ); } );
-
-  // Move the player at this speed.
-  var speed = 100;
-
-  if ( cursors.up.isDown ) {
-    player.body.velocity.y = -speed;
-  }
-  else if ( cursors.down.isDown ) {
-    player.body.velocity.y = speed;
-  }
-  else {
-    player.body.velocity.y = 0;
-  }
-
-  if ( cursors.left.isDown ) {
-    player.body.velocity.x = -speed;
-    player.animations.play('left');
-  }
-  else if ( cursors.right.isDown ) {
-    player.body.velocity.x = speed;
-    player.animations.play('right');
-  }
-  else {
-    player.body.velocity.x = 0;
-    player.animations.stop();
-    player.frame = 4;
-  }
-
-}
-
-function render () {
-
-}
+// var maze = new Phaser.Game( 800, 600, Phaser.AUTO, "maze", { preload: preload, create: create, update: update, render: render }, false );
+//
+// var isoGroup, cursors, walls;
+//
+// function preload () {
+//   maze.load.tilemap( 'floor', '<%= asset_path( "assets/mazeup_Floor.csv" ) %>', null, Phaser.Tilemap.CSV );
+//   maze.load.image( 'tile', '<%= asset_path( "assets/stone_n.png" ) %>' );
+//   maze.load.image( 'wall', '<%= asset_path( "assets/stonewall_n.png" ) %>' );
+//   maze.load.spritesheet('hero', '<%= asset_path("assets/hero.png") %>', 45, 48);
+//
+//   maze.time.advancedTiming = true;
+//
+//   // Add and enable the plug-in.
+//   maze.plugins.add( new Phaser.Plugin.Isometric( maze ) );
+//
+//   // Start the IsoArcade physics system.
+//   maze.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
+//
+//   // This is used to set a maze canvas-based offset for the 0, 0, 0 isometric coordinate - by default
+//   // this point would be at screen coordinates 0, 0 (top left) which is usually undesirable.
+//   maze.iso.anchor.setTo(0.5, 0.2);
+// }
+//
+//
+// function create () {
+//   isoGroup = maze.add.group();
+//   walls = maze.add.group();
+//
+//
+//   var tileArray = [];
+//   var tiles = [
+//                 4, 4, 4, 4, 4, 5, 4, 4, 4, 8,
+//                 10, -1, -1, -1, 8, -1, 8, 1, -1, 6,
+//                 10, -1, 6, -1, 8, 9, 9, 9, -1, 2,
+//                 10, -1, 3, 1, 0, -1, 0, -1, -1, 6,
+//                 7, 4, -1, -1, -1, -1, -1, -1, -1, 8,
+//                 10, -1, -1, 4, 4, 7, 6, 9, -1, 6,
+//                 10, -1, 3, -1, -1, 7, -1, -1, -1, 8,
+//                 4, 4, 4, -1, -1, -1, -1, 9, 9, 9,
+//                 7, -1, -1, -1, 7, 9, 9, 7, -1, 8,
+//                 10, 0, 4, 4, -1, -1, -1, -1, -1, 8
+//               ];
+//
+//   var size = 16;
+//
+//   var i = 0, tile;
+//   for (var y = size; y <= maze.physics.isoArcade.bounds.frontY - ( Math.abs( size ) ); y += ( Math.abs(size) ) ) {
+//       for (var x = size; x <= maze.physics.isoArcade.bounds.frontX - ( Math.abs( size ) ); x += ( Math.abs( size ) ) ) {
+//           tile = maze.add.isoSprite( x, y, 0, "tile", null, isoGroup );
+//           tile.anchor.set( 0.5, 0.5 );
+//           tile.smoothed = false;
+//       }
+//   }
+//
+//   // Let's make a load of cubes on a grid, but do it back-to-front so they get added out of order.
+//   var wall;
+//   for (var xx = 300; xx > 0; xx -= 80) {
+//       for (var yy = 300; yy > 0; yy -= 80) {
+//           // Create a wall using the new game.add.isoSprite factory method at the specified position.
+//           // The last parameter is the group you want to add it to (just like game.add.sprite)
+//           wall = maze.add.isoSprite( xx, yy, 3, 'wall', 0, walls );
+//           wall.anchor.set(0.5);
+//
+//           // Enable the physics body on this wall.
+//           maze.physics.isoArcade.enable( wall );
+//           wall.body.immovable = true;
+//
+//
+//           // Collide with the world bounds so it doesn't go falling forever or fly off the screen!
+//           // wall.body.collideWorldBounds = true;
+//           //
+//           // // Add a full bounce on the x and y axes, and a bit on the z axis.
+//           // wall.body.bounce.set(0, 0, 0);
+//           //
+//           // // Add some X and Y drag to make walls slow down after being pushed.
+//           // wall.body.drag.set(0, 0, 0);
+//       }
+//   }
+//
+//
+//   player = maze.add.isoSprite(128, 128, 1, 'hero', 4);
+//
+//   //  Our two animations, walking left and right.
+//   player.animations.add('right', [0, 1, 2, 3], 10, true);
+//   player.animations.add('left', [5, 6, 7, 8], 10, true);
+//
+//   console.log( player.animations );
+//   player.name = "player";
+//
+//
+//   player.anchor.set( 0.5 );
+//   maze.physics.isoArcade.enable( player );
+//   player.body.collideWorldBounds = true;
+//
+//   cursors = maze.input.keyboard.createCursorKeys();
+//
+//   maze.input.keyboard.addKeyCapture([
+//       Phaser.Keyboard.LEFT,
+//       Phaser.Keyboard.RIGHT,
+//       Phaser.Keyboard.UP,
+//       Phaser.Keyboard.DOWN,
+//       Phaser.Keyboard.SPACEBAR
+//   ]);
+//
+// }
+//
+// function update () {
+//   maze.physics.isoArcade.collide( player, walls, function () { console.log( "Collided" ); } );
+//
+//   // Move the player at this speed.
+//   var speed = 100;
+//
+//   if ( cursors.up.isDown ) {
+//     player.body.velocity.y = -speed;
+//   }
+//   else if ( cursors.down.isDown ) {
+//     player.body.velocity.y = speed;
+//   }
+//   else {
+//     player.body.velocity.y = 0;
+//   }
+//
+//   if ( cursors.left.isDown ) {
+//     player.body.velocity.x = -speed;
+//     player.animations.play('left');
+//   }
+//   else if ( cursors.right.isDown ) {
+//     player.body.velocity.x = speed;
+//     player.animations.play('right');
+//   }
+//   else {
+//     player.body.velocity.x = 0;
+//     player.animations.stop();
+//     player.frame = 4;
+//   }
+//
+// }
+//
+// function render () {
+//
+// }
