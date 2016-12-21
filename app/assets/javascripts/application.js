@@ -14,4 +14,5 @@
 //= require jquery_ujs
 //= require phaser.min.js
 //= require phaser-plugin-isometric.min.js
+//= require boss.js.erb
 //= require_tree .

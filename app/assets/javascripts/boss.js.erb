@@ -1,0 +1,81 @@
+// The arguments
+// 1. width
+// 2. height
+// 3. renderer ( Phaser.AUTO, Phaser.CANVAS, Phaser.WEBGL or Phaser.HEADLESS for no rendering at all )
+// 4. parent ( To specify which element that it will append to. Takes in the ID of the element )
+// 5. State of it during on create ( null, preload, create, update, render )
+// 6. Transparent ( referring to the background whether to have a transparent or not )
+// 7. Antialias ( Drawing of the image texture. Default is true unless if you're going to have pixel art, then go for false )
+// 8. physicsConfig ( Physics configuration object to pass to the Physics world upon creation )
+var maze = new Phaser.Game( 800, 400, Phaser.AUTO, "maze", null, true );
+
+var mazerunner = {
+  preload: function () {
+            // Load the assets
+            maze.load.image( 'cube', "<%= asset_path( 'assets/isometric-blocks/PNG/Abstract_tiles/abstractTile_01.png' ) %>" );
+
+            // Add and enable the plug-in.
+            maze.plugins.add( new Phaser.Plugin.Isometric( maze ) );
+
+             // In order to have the camera move, we need to increase the size of our world bounds.
+            maze.world.setBounds(0, 0, 2048, 1024);
+
+            // Start the IsoArcade physics system.
+            maze.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
+
+            // This is used to set a maze canvas-based offset for the 0, 0, 0 isometric coordinate - by default
+            // this point would be at screen coordinates 0, 0 (top left) which is usually undesirable.
+            // When using camera following, it's best to keep the Y anchor set to 0, which will let the camera
+            // cover the full size of your world bounds.
+            maze.iso.anchor.setTo(0.5, 0);
+           },
+
+  create: function () {
+            // Create a group for our tiles, so we can use Group.sort
+            isoGroup = maze.add.group();
+
+            // Set the global gravity for IsoArcade.
+            maze.physics.isoArcade.gravity.setTo(0, 0, -500);
+
+            // Let's make a load of cubes on a grid, but do it back-to-front so they get added out of order.
+            var cube;
+            for (var xx = 1024; xx > 0; xx -= 140) {
+               for (var yy = 1024; yy > 0; yy -= 140) {
+                   // Create a cube using the new maze.add.isoSprite factory method at the specified position.
+                   // The last parameter is the group you want to add it to (just like maze.add.sprite)
+                   cube = maze.add.isoSprite(xx, yy, 0, 'cube', 0, isoGroup);
+                   cube.anchor.set(0.5);
+
+                   // Enable the physics body on this cube.
+                   maze.physics.isoArcade.enable(cube);
+
+                   // Collide with the world bounds so it doesn't go falling forever or fly off the screen!
+                   cube.body.collideWorldBounds = true;
+
+                   // Add a full bounce on the x and y axes, and a bit on the z axis.
+                   cube.body.bounce.set(1, 1, 0.2);
+
+                   // Add some X and Y drag to make cubes slow down after being pushed.
+                   cube.body.drag.set(100, 100, 0);
+               }
+            }
+
+            // Set up our controls.
+            this.cursors = maze.input.keyboard.createCursorKeys();
+
+            this.game.input.keyboard.addKeyCapture([
+                Phaser.Keyboard.LEFT,
+                Phaser.Keyboard.RIGHT,
+                Phaser.Keyboard.UP,
+                Phaser.Keyboard.DOWN,
+                Phaser.Keyboard.SPACEBAR
+            ]);
+
+          },
+  update: function () {
+
+  }
+}
+
+maze.state.add( 'mazerunner', mazerunner );
+maze.state.start( 'mazerunner' );
