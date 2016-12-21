@@ -1,0 +1,69 @@
+var maze = new Phaser.Game( 800, 600, Phaser.AUTO, "maze", { preload: preload, create: create, update: update, render: render }, false );
+
+function preload () {
+  maze.load.tilemap( 'floor', '<%= asset_path( "assets/mazeup_Floor.csv" ) %>', null, Phaser.Tilemap.CSV );
+  maze.load.image( 'tiles', '<%= asset_path( "assets/mazeup_sprite.png" ) %>' );
+  maze.load.image( 'player', '<%= asset_path( "assets/master.png" ) %>' );
+
+  maze.time.advancedTiming = true;
+
+  // Add and enable the plug-in.
+  maze.plugins.add( new Phaser.Plugin.Isometric( maze ) );
+
+  // Start the IsoArcade physics system.
+  maze.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
+
+  // This is used to set a maze canvas-based offset for the 0, 0, 0 isometric coordinate - by default
+  // this point would be at screen coordinates 0, 0 (top left) which is usually undesirable.
+  maze.iso.anchor.setTo(0.5, 0.2);
+}
+
+var map;
+function create () {
+
+  map = maze.add.tilemap( 'floor', 256, 512 );
+
+  map.addTilesetImage( 'tiles' );
+
+  // map.setCollisionBetween(1, 12);
+
+  layer = map.createLayer( 0 );
+
+  layer.resizeWorld();
+
+  player = maze.add.isoSprite( 128, 128, 0, 'player' );
+  player.name = "player";
+
+  player.anchor.set( 0.5 );
+  maze.physics.isoArcade.enable( player );
+  player.body.collideWorldBounds = true;
+
+  //  Allow cursors to scroll around the map
+  cursors = maze.input.keyboard.createCursorKeys();
+
+  maze.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+}
+
+function update () {
+  if (cursors.left.isDown)
+   {
+       maze.camera.x -= 4;
+   }
+   else if (cursors.right.isDown)
+   {
+       maze.camera.x += 4;
+   }
+
+   if (cursors.up.isDown)
+   {
+       maze.camera.y -= 4;
+   }
+   else if (cursors.down.isDown)
+   {
+       maze.camera.y += 4;
+   }
+}
+
+function render () {
+
+}
