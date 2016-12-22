@@ -22,6 +22,7 @@
 //= require phaser-plugin-isometric.min.js
 //= require scroll
 // require stars
+//= require sweetalert.min.js
 //= require ghost
 //= require leap
 //= require boss

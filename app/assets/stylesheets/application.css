@@ -10,14 +10,15 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
+ *= require sweetalert.css
  *= require_tree .
  *= require_self
  */
 
 
  /*This is css for generating stars background*/
-*{
-  /*box-sizing: border-box;*/
+
+* {
   margin: 0px;
   padding: 0px;
 }
