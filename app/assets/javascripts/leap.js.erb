@@ -1,3 +1,11 @@
+// ISSUES TO FIX:
+  // Implement Fancy's fix to the HP upon collision
+  // Is the game play okay? Like is it impossible to win? Who knows?
+  // Can we give the turtle space thrusters?
+  // Can we make the enemy move? :O?
+  // replace the alerts
+
+
 $( document ).ready( function () {
   if ( $( "#leap" ).length ) {
 
@@ -90,16 +98,16 @@ function create() {
   var createEnemies = function (height) {
   for (var i = 0; i < 6; i++) {
 
-    var enemy = enemies.create(i * 120, (Math.random() * 600) + height, 'enemy');
+    var enemy = enemies.create(i * 120, (Math.random() * 400) + height, 'enemy');
     enemy.body.immovable = true;
 
   }
 };
 
 createEnemies(100);
-createEnemies(700);
+createEnemies(900);
 createEnemies(1300);
-createEnemies(2000);
+createEnemies(1700);
 
   //  Our controls.
   cursors = game.input.keyboard.createCursorKeys();
@@ -179,10 +187,9 @@ function update() {
         player.frame = 4;
     }
 
-    //  Allow the player to jump if they are touching the ground.
-    // if (cursors.up.isDown && player.body.touching.down)
-    // {
-    //     player.body.velocity.y = -350;
+    //  Allow the player to jump
+    // if (cursors.up.isDown && player.body.touching.down) {
+    //   player.body.velocity.y = -150;
     // }
 
     //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
@@ -228,7 +235,7 @@ function hitEnemy (player, enemy) {
 
 function checkWin () {
     console.log("checkWin is ran");
-    if (score === 200) {
+    if (score >= 200) {
     alert('You win!');
     }
     else{
