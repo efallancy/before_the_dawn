@@ -7,4 +7,10 @@ class PagesController < ApplicationController
 
   def about
   end
+
+  def ghost
+  end
+
+  def leap
+  end
 end
