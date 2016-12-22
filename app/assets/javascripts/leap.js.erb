@@ -5,251 +5,209 @@
   // Can we make the enemy move? :O?
   // replace the alerts
 
-
 $( document ).ready( function () {
   if ( $( "#leap" ).length ) {
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'leap', { preload: preload, create: create, update: update });
+    var game = new Phaser.Game(800, 600, Phaser.AUTO, 'leap', { preload: preload, create: create, update: update });
 
-function preload() {
+    var player;
+    var platforms;
+    var cliff;
+    var ground;
+    var cursors;
+    var stars;
+    var score = 0;
+    var scoreText;
+    var enemies;
+    var bg;
+    var life = 3;
+    var modal = new gameModal( game );
 
-  game.load.image('sky', '<%= image_path( "sky-fa.png") %>' );
-  game.load.image('ground', '<%= image_path ("platform.png") %>' );
-  game.load.image('cliff', '<%= image_path ("space-cliff.png") %>' );
-  game.load.image('star', '<%= image_path("star.png") %>');
-  game.load.spritesheet('hero', '<%= image_path("hero.png") %>', 45, 48);
-  // game.load.spritesheet('enemy', 'baddie.png', 32, 48);
-  game.load.spritesheet('enemy', '<%= image_path("space-enemy.png") %>', 42, 30);
-  game.load.image( 'play_button', '<%= image_path( "play_button.png" ) %>' );
+    function preload() {
 
-
-  game.world.setBounds(0, 0, 800, 2400);
-
-}
-
-var player;
-var platforms;
-var cliff;
-var ground;
-var cursors;
-var stars;
-var score = 0;
-var scoreText;
-var enemies;
-var bg;
-var life = 3;
-
-function create() {
+      game.load.image('sky', '<%= image_path( "sky-fa.png") %>' );
+      game.load.image('ground', '<%= image_path ("platform.png") %>' );
+      game.load.image('cliff', '<%= image_path ("space-cliff.png") %>' );
+      game.load.image('star', '<%= image_path("star.png") %>');
+      game.load.spritesheet('hero', '<%= image_path("hero.png") %>', 45, 48);
+      // game.load.spritesheet('enemy', 'baddie.png', 32, 48);
+      game.load.spritesheet('enemy', '<%= image_path("space-enemy.png") %>', 42, 30);
+      game.load.image( 'play_button', '<%= image_path( "play_button.png" ) %>' );
 
 
-  // enabling physics - arcade
-  game.physics.startSystem(Phaser.Physics.ARCADE);
+      game.world.setBounds(0, 0, 800, 2400);
 
-  // generate background
-  bg = game.add.sprite(0, 0, 'sky');
-  bg.fixedToCamera = true;
-
-  // pop up
-  var modal = new gameModal( game );
-  modal.createModal({
-            type:"modalStartLeap",
-            includeBackground: true,
-            backgroundColor: "0xFFFFFF",
-            modalCloseOnInput: true,
-            itemsArr: [
-                        {
-                          type: "text",
-                              content: "3, 2, 1.. Geronimo!",
-                              fontFamily: "Courier New",
-                              fontSize: 42,
-                              color: "0xfb387c",
-                              offsetY: -140
-                        },
-                        {
-                          type: "text",
-                            content: "The first step is always the hardest. \n Ready to take a leap of faith?",
-                            fontFamily: "Courier New",
-                            fontSize: 18,
-                            color: "0xfb387c",
-                            offsetY: -80
-                        },
-                        {
-                              type: "image",
-                              content: "play_button",
-                              offsetY: -25,
-                              offsetX: 0,
-                              contentScale: 0.5,
-                              callback: function(){
-                                 modal.hideModal( "modalStartLeap" );
-                              }
-                        }
-                      ]
-   });
-   modal.showModal("modalStartLeap");
-
-
-  // platforms - ground and cliff
-  platforms = game.add.group();
-
-  // enabling physics on any objects with platform group
-  platforms.enableBody = true;
-
-  // generating the ground
-  ground = platforms.create(0, game.world.height - 64, 'ground');
-
-  // scale to fit the width of the game
-  ground.scale.setTo(2, 2);
-
-  // ground is immovable
-  ground.body.immovable = true;
-
-  // generating the cliff
-  cliff = platforms.create(0, 60, 'cliff');
-  cliff.body.immovable = true;
-
-  // creating our hero - check image file
-  player = game.add.sprite(200, game.world.height = 0, 'hero');
-
-  // enable physics on our hero
-  game.physics.arcade.enable(player);
-
-  // player physics properties
-  player.body.bounce.y = 0;
-  player.body.gravity.y = 10;
-  player.body.collideWorldsBounds = true;
-
-  //  Our two animations, walking left and right.
-  player.animations.add('right', [0, 1, 2, 3], 10, true);
-  player.animations.add('left', [5, 6, 7, 8], 10, true);
-
-  // camera follow
-  game.camera.follow(player);
-
-  // stop our player getting lost
-  player.body.collideWorldBounds = true;
-
-  // create enemy
-  enemies = game.add.group();
-  enemies.enableBody = true;
-  // barriers.body.immovable = true;
-
-  // generate enemies
-
-  var createEnemies = function (height) {
-  for (var i = 0; i < 6; i++) {
-
-    var enemy = enemies.create(i * 120, (Math.random() * 400) + height, 'enemy');
-    enemy.body.immovable = true;
-
-  }
-};
-
-createEnemies(100);
-createEnemies(900);
-createEnemies(1300);
-createEnemies(1700);
-
-  //  Our controls.
-  cursors = game.input.keyboard.createCursorKeys();
-
-  //  Finally some stars to collect
-    stars = game.add.group();
-
-    //  We will enable physics for any star that is created in this group
-    stars.enableBody = true;
-
-    //  Here we'll create 12 of them evenly spaced apart
-
-    var createStars = function (height) {
-    for (var i = 0; i < 12; i++)
-    {
-        //  Create a star inside of the 'stars' group
-        var star = stars.create(i * 70, (Math.random() * 400) + height, 'star');
-
-        //  Let gravity do its thing
-        star.body.gravity.y = 0;
-
-        //  This just gives each star a slightly random bounce value
-        // star.body.bounce.y = 0.7 + Math.random() * 0.2;
-    }
-  };
-
-  createStars(100);
-  createStars(500);
-  createStars(900);
-  createStars(1300);
-  createStars(1600);
-  createStars(1800);
-
-    // The Score
-
-    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#FFF'});
-    scoreText.fixedToCamera = true;
-    scoreText.cameraOffset.setTo(16, 16);
-
-
-    // Life Points
-    lifeText = game.add.text(700, 16, 'life: 3', { fontSize: '32px', fill: '#FFF'});
-    lifeText.fixedToCamera = true;
-    lifeText.cameraOffset.setTo(700, 16);
-
-}
-
-function update() {
-
-  // collide player with cliff
-  game.physics.arcade.collide(player, cliff);
-  //  game.physics.arcade.collide(stars, ground);
-  //  game.physics.arcade.overlap(player, barriers);
-
-  //  Reset the players velocity (movement)
-    player.body.velocity.x = 0;
-
-    if (cursors.left.isDown)
-    {
-        //  Move to the left
-        player.body.velocity.x = -150;
-
-        player.animations.play('left');
-    }
-    else if (cursors.right.isDown)
-    {
-        //  Move to the right
-        player.body.velocity.x = 150;
-
-        player.animations.play('right');
-    }
-    else
-    {
-        //  Stand still
-        player.animations.stop();
-
-        player.frame = 4;
     }
 
-    //  Allow the player to jump
-    // if (cursors.up.isDown && player.body.touching.down) {
-    //   player.body.velocity.y = -150;
-    // }
+    function create() {
 
-    //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-    game.physics.arcade.overlap(player, stars, collectStar, null, this);
 
-    // collide with barrier
-    game.physics.arcade.collide(player, enemies, hitEnemy, null, this);
+      // enabling physics - arcade
+      game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    // if player is on the ground, checkWin
-    game.physics.arcade.collide(player, ground, checkWin, null, this);
+      // generate background
+      bg = game.add.sprite(0, 0, 'sky');
+      bg.fixedToCamera = true;
 
-};
+      // Create Starting leap modal
+      createLeapModal();
+
+      // pop up
+      modal.showModal("modalStartLeap");
+
+      // platforms - ground and cliff
+      platforms = game.add.group();
+
+      // enabling physics on any objects with platform group
+      platforms.enableBody = true;
+
+      // generating the ground
+      ground = platforms.create(0, game.world.height - 64, 'ground');
+
+      // scale to fit the width of the game
+      ground.scale.setTo(2, 2);
+
+      // ground is immovable
+      ground.body.immovable = true;
+
+      // generating the cliff
+      cliff = platforms.create(0, 60, 'cliff');
+      cliff.body.immovable = true;
+
+      // creating our hero - check image file
+      player = game.add.sprite(200, game.world.height = 0, 'hero');
+
+      // enable physics on our hero
+      game.physics.arcade.enable(player);
+
+      // player physics properties
+      player.body.bounce.y = 0;
+      player.body.gravity.y = 10;
+      player.body.collideWorldsBounds = true;
+
+      //  Our two animations, walking left and right.
+      player.animations.add('right', [0, 1, 2, 3], 10, true);
+      player.animations.add('left', [5, 6, 7, 8], 10, true);
+
+      // camera follow
+      game.camera.follow(player);
+
+      // stop our player getting lost
+      player.body.collideWorldBounds = true;
+
+      // create enemy
+      enemies = game.add.group();
+      enemies.enableBody = true;
+      // barriers.body.immovable = true;
+
+      // generate enemies
+
+      var createEnemies = function (height) {
+        for (var i = 0; i < 6; i++) {
+          var enemy = enemies.create(i * 120, (Math.random() * 400) + height, 'enemy');
+          enemy.body.immovable = true;
+        }
+      };
+
+      createEnemies(100);
+      createEnemies(900);
+      createEnemies(1300);
+      createEnemies(1700);
+
+      //  Our controls.
+      cursors = game.input.keyboard.createCursorKeys();
+
+      //  Finally some stars to collect
+      stars = game.add.group();
+
+      //  We will enable physics for any star that is created in this group
+      stars.enableBody = true;
+
+      //  Here we'll create 12 of them evenly spaced apart
+
+      var createStars = function (height) {
+        for (var i = 0; i < 12; i++)
+        {
+            //  Create a star inside of the 'stars' group
+            var star = stars.create(i * 70, (Math.random() * 400) + height, 'star');
+
+            //  Let gravity do its thing
+            star.body.gravity.y = 0;
+
+            //  This just gives each star a slightly random bounce value
+            // star.body.bounce.y = 0.7 + Math.random() * 0.2;
+        }
+      };
+
+      createStars(100);
+      createStars(500);
+      createStars(900);
+      createStars(1300);
+      createStars(1600);
+      createStars(1800);
+
+      // The Score
+      scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#FFF'});
+      scoreText.fixedToCamera = true;
+      scoreText.cameraOffset.setTo(16, 16);
+
+
+      // Life Points
+      lifeText = game.add.text(700, 16, 'life: 3', { fontSize: '32px', fill: '#FFF'});
+      lifeText.fixedToCamera = true;
+      lifeText.cameraOffset.setTo(700, 16);
+    }
+
+    function update() {
+
+      // collide player with cliff
+      game.physics.arcade.collide(player, cliff);
+      //  game.physics.arcade.collide(stars, ground);
+      //  game.physics.arcade.overlap(player, barriers);
+
+      //  Reset the players velocity (movement)
+      player.body.velocity.x = 0;
+
+      if (cursors.left.isDown)
+      {
+          //  Move to the left
+          player.body.velocity.x = -150;
+
+          player.animations.play('left');
+      }
+      else if (cursors.right.isDown)
+      {
+          //  Move to the right
+          player.body.velocity.x = 150;
+
+          player.animations.play('right');
+      }
+      else
+      {
+          //  Stand still
+          player.animations.stop();
+
+          player.frame = 4;
+      }
+
+      //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
+      game.physics.arcade.overlap(player, stars, collectStar, null, this);
+
+      // collide with barrier
+      game.physics.arcade.collide(player, enemies, hitEnemy, null, this);
+
+      // if player is on the ground, checkWin
+      game.physics.arcade.collide(player, ground, checkWin, null, this);
+
+    };
 
     function collectStar (player, star) {
-        // Removes the star from the screen
-        star.kill();
+      // Removes the star from the screen
+      star.kill();
 
-        //  Add and update the score
-        score += 10;
-        scoreText.text = 'Score: ' + score;
+      //  Add and update the score
+      score += 10;
+      scoreText.text = 'Score: ' + score;
     };
 
     function hitEnemy (player, enemy) {
@@ -265,166 +223,173 @@ function update() {
         // pop up - retry message:
         var modalReplay2 = new gameModal( game );
         modalReplay2.createModal({
-                  type:"modalLeapReplay",
-                  includeBackground: true,
-                  backgroundColor: "0xFFFFFF",
-                  modalCloseOnInput: true,
-                  itemsArr: [
-                              {
-                                type: "text",
-                                    content: "Uh Oh!",
-                                    fontFamily: "Courier New",
-                                    fontSize: 42,
-                                    color: "0xfb387c",
-                                    offsetY: -140
-                              },
-                              {
-                                type: "text",
-                                  content: "Don't give up! Try again.",
-                                  fontFamily: "Courier New",
-                                  fontSize: 18,
-                                  color: "0xfb387c",
-                                  offsetY: -40
-                              },
-                              {
-                                    type: "image",
-                                    content: "play_button",
-                                    offsetY: 80,
-                                    offsetX: 0,
-                                    contentScale: 0.5,
-                                    callback: function(){
-                                       window.location.href = "/pages/leap";
-                                    }
-                              }
-                            ]
-         });
-         modalReplay2.showModal("modalLeapReplay");
+          type:"modalLeapReplay",
+          includeBackground: true,
+          backgroundColor: "0xFFFFFF",
+          modalCloseOnInput: true,
+          itemsArr: [
+                      {
+                        type: "text",
+                        content: "Uh Oh!",
+                        fontFamily: "Courier New",
+                        fontSize: 42,
+                        color: "0xfb387c",
+                        offsetY: -140 + game.camera.y
+                      },
+                      {
+                        type: "text",
+                        content: "Don't give up! Try again.",
+                        fontFamily: "Courier New",
+                        fontSize: 18,
+                        color: "0xfb387c",
+                        offsetY: -40 + game.camera.y
+                      },
+                      {
+                        type: "image",
+                        content: "play_button",
+                        offsetY: 80 + game.camera.y,
+                        offsetX: 0 + game.camera.x,
+                        contentScale: 0.5,
+                        callback: function(){
+                          window.location.href = "/pages/leap";
+                        }
+                      }
+                    ]
+        });
+
+        modalReplay2.showModal("modalLeapReplay");
       }
     };
 
-  function checkWin () {
+    function checkWin () {
       console.log("checkWin ran");
       console.log(score);
       if (score < 150) {
         // pop up - lose
+
         console.log("you are loser forever!");
         player.kill();
 
-        var modalYo = new gameModal( game );
-        modalYo.createModal({
-                  type: "modalYouLose",
-                  includeBackground: true,
-                  backgroundColor: "0xFFFFFF",
-                  modalCloseOnInput: true,
-                  itemsArr: [
-                              {
-                                type: "text",
-                                    content: "Oh noes!",
-                                    fontFamily: "Courier New",
-                                    fontSize: 42,
-                                    color: "0xfb387c",
-                                    offsetY: -140
-                              },
-                              {
-                                type: "text",
-                                  content: "You didn't collect enough star power. \nDon't give up! Try again.",
-                                  fontFamily: "Courier New",
-                                  fontSize: 18,
-                                  color: "0xfb387c",
-                                  offsetY: -40
-                              },
-                              {
-                                type: "image",
-                                  content: "play_button",
-                                  offsetY: 80,
-                                  offsetX: 0,
-                                  contentScale: 0.5,
-                                  callback: function(){
-                                     window.location.href = "/pages/ghost";
-                                   }
-                              }
-                            ]
-         });
-        modalYo.showModal("modalYouLose");
+        var modalLose = new gameModal( game );
+
+        modalLose.createModal({
+          type: "modalLose",
+          includeBackground: true,
+          backgroundColor: "0xFFFFFF",
+          modalCloseOnInput: true,
+          itemsArr: [
+                      {
+                        type: "text",
+                        content: "Oh noes!",
+                        fontFamily: "Courier New",
+                        fontSize: 42,
+                        color: "0xfb387c",
+                        offsetY: -140 + game.camera.y
+                      },
+                      {
+                        type: "text",
+                        content: "You didn't collect enough star power. \nDon't give up! Try again.",
+                        fontFamily: "Courier New",
+                        fontSize: 18,
+                        color: "0xfb387c",
+                        offsetY: -40 + game.camera.y
+                      },
+                      {
+                        type: "image",
+                        content: "play_button",
+                        offsetY: 80 + game.camera.y,
+                        offsetX: 0 + game.camera.x,
+                        contentScale: 0.5,
+                        callback: function(){
+                          window.location.href = "/pages/leap";
+                        }
+                      }
+                    ]
+          });
+
+
+        modalLose.showModal("modalLose");
+
       } else {
         // sweet alert - win
+        player.kill()
         var modalWin2 = new gameModal( game );
         modalWin2.createModal({
-                  type: "modalLeapWin",
-                  includeBackground: true,
-                  backgroundColor: "0xFFFFFF",
-                  modalCloseOnInput: true,
-                  itemsArr: [
-                    					{
-                                type: "text",
-                                    content: "Awww Yisss!",
-                                    fontFamily: "Courier New",
-                                    fontSize: 42,
-                                    color: "0xfb387c",
-                                    offsetY: -140
-                              },
-                              {
-                                type: "text",
-                                  content: "The first step is always the hardest \nand you pwnd it! \nCongratulations! \nSpread those wings and fly \non to the next level.",
-                                  fontFamily: "Courier New",
-                                  fontSize: 18,
-                                  color: "0xfb387c",
-                                  offsetY: -40
-                              },
-                              {
-                                  type: "image",
-                                    content: "play_button",
-                                    offsetY: 80,
-                                    offsetX: 0,
-                                    contentScale: 0.5,
-                                    callback: function(){
-                                       window.location.href = "/pages/ghost";
-                                    }
-                              }
-                            ]
+          type: "modalLeapWin",
+          includeBackground: true,
+          backgroundColor: "0xFFFFFF",
+          modalCloseOnInput: true,
+          itemsArr: [
+            					{
+                        type: "text",
+                            content: "Awww Yisss!",
+                            fontFamily: "Courier New",
+                            fontSize: 42,
+                            color: "0xfb387c",
+                            offsetY: -140 + game.camera.y
+                      },
+                      {
+                        type: "text",
+                          content: "The first step is always the hardest \nand you pwnd it! \nCongratulations! \nSpread those wings and fly \non to the next level.",
+                          fontFamily: "Courier New",
+                          fontSize: 18,
+                          color: "0xfb387c",
+                          offsetY: -40 + game.camera.y
+                      },
+                      {
+                          type: "image",
+                            content: "play_button",
+                            offsetY: 80 + game.camera.y,
+                            offsetX: 0 + game.camera.x,
+                            contentScale: 0.5,
+                            callback: function(){
+                               window.location.href = "/pages/ghost";
+                            }
+                      }
+                    ]
          });
          modalWin2.showModal("modalLeapWin");
       }
-      // else {
-      //   console.log("you are loser forever!");
-      //   var modalReplay = new gameModal( game );
-      //   modalReplay.createModal({
-      //             type:"modalLeapLose",
-      //             includeBackground: true,
-      //             backgroundColor: "0xFFFFFF",
-      //             modalCloseOnInput: true,
-      //             itemsArr: [
-      //                         {
-      //                           type: "text",
-      //                               content: "Oh noes!",
-      //                               fontFamily: "Courier New",
-      //                               fontSize: 42,
-      //                               color: "0xfb387c",
-      //                               offsetY: -140
-      //                         },
-      //                         {
-      //                           type: "text",
-      //                             content: "You didn't collect enough star power. \nDon't give up! Try again.",
-      //                             fontFamily: "Courier New",
-      //                             fontSize: 18,
-      //                             color: "0xfb387c",
-      //                             offsetY: -40
-      //                         },
-      //                         {
-      //                           type: "image",
-      //                             content: "play_button",
-      //                             offsetY: 80,
-      //                             offsetX: 0,
-      //                             contentScale: 0.5,
-      //                             callback: function(){
-      //                                window.location.href = "/pages/ghost";
-      //                              }
-      //                         }
-      //                       ]
-      //    });
-      //   modalReplay.showModal("modalLeapLose");
-      // }
-    };
+    }
 
+    function createLeapModal () {
+      // Start Leap Modal
+      modal.createModal({
+        type:"modalStartLeap",
+        includeBackground: true,
+        backgroundColor: "0xFFFFFF",
+        modalCloseOnInput: true,
+        itemsArr: [
+                    {
+                      type: "text",
+                          content: "3, 2, 1.. Geronimo!",
+                          fontFamily: "Courier New",
+                          fontSize: 42,
+                          color: "0xfb387c",
+                          offsetY: -140 + game.camera.y
+                    },
+                    {
+                      type: "text",
+                        content: "The first step is always the hardest. \n Ready to take a leap of faith?",
+                        fontFamily: "Courier New",
+                        fontSize: 18,
+                        color: "0xfb387c",
+                        offsetY: -80 + game.camera.y
+                    },
+                    {
+                          type: "image",
+                          content: "play_button",
+                          offsetY: -25 + game.camera.y,
+                          offsetX: 0 + game.camera.x,
+                          contentScale: 0.5,
+                          callback: function(){
+                             modal.hideModal( "modalStartLeap" );
+                          }
+                    }
+                  ]
+      });
+
+
+    }
   }
 });
