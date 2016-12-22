@@ -16,8 +16,8 @@ $( document ).ready( function () {
 
   function preload () {
     ghost.load.image('sky', '<%= image_path( "sky-fa.png" ) %>' );
+    ghost.load.image( 'ghostly', '<%= image_path( "ghost.png" ) %>', 45, 48 );
     ghost.load.spritesheet( 'hero', '<%= image_path( "hero.png" ) %>', 45, 48);
-    ghost.load.spritesheet( 'ghostly', '<%= image_path( "ghost.png" ) %>', 45, 48 );
 
     ghost.time.advancedTiming = true;
 
