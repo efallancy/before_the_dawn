@@ -217,8 +217,23 @@ function bossHit ( player, boss ) {
     player = game.add.sprite( 200, game.world.height / 2, 'dead_hero' );
     game.physics.arcade.enable( player );
     game.physics.arcade.collide( player, boss );
+  // sweet alert: lose
+  swal({
+    title: "Oh no!",
+    text: "You lose :( Don't give up!",
+    type: "error",
+    showCancelButton: false,
+    confirmButtonColor: "#DD6B55",
+    confirmButtonText: "Try again",
+    closeOnConfirm: false,
+  },
+  function(){
+      window.location.href = '/pages/boss';
+  });
+    player = game.add.sprite( 200, game.world.height / 2, 'dead_hero' );
+    game.physics.arcade.enable( player );
+    game.physics.arcade.collide( player, boss );
 
-    alert("Game Over! x.x");
   }
 }
 
@@ -235,7 +250,20 @@ function directHit() {
   console.log(bossHP);
   if (bossHP <= 0) {
     boss.kill();
-    alert("Congratulations! Winner, winner chicken dinner!");
+
+    // sweet alert: win!
+    swal({
+      title: "KO! You win!!",
+      text: "Congratulations!",
+      type: "success",
+      showCancelButton: false,
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "Woohoo! I'm the best!",
+      closeOnConfirm: false,
+    },
+    function(){
+        window.location.href = '/';
+    });
   }
 
 }
