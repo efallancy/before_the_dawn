@@ -1,28 +1,12 @@
-== README
+# Before the Dawn
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+About a turtle that goes beyond the swirl of its own world, in search of itself where being confronted by the ghost of the past.
 
-Things you may want to cover:
+Consist of 3 levels:
 
-* Ruby version
+* The leap of faith
+* Ghost from the past
+* The baws
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+Created by
+<tt>Samnevers, Rozilla, Fancy </tt>
