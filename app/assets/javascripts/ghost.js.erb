@@ -13,11 +13,13 @@ $( document ).ready( function () {
 
   var cursors, ghosts, tiles, spawned = 0;
   var hasCreatedOwnGhost = false;
+  var scene;
 
   function preload () {
     ghost.load.image( 'ghostly', '<%= image_path( "ghost.png" ) %>' );
     ghost.load.image('sky', '<%= image_path( "sky-fa.png") %>' );
     ghost.load.spritesheet( 'hero', '<%= image_path("hero.png") %>', 45, 48);
+    ghost.load.spritesheet('ghost-scene', '<%= image_path("test-scene.png") %>' );
 
     ghost.time.advancedTiming = true;
 
@@ -66,6 +68,8 @@ $( document ).ready( function () {
         Phaser.Keyboard.UP,
         Phaser.Keyboard.DOWN,
         Phaser.Keyboard.SPACEBAR
+
+
     ]);
 
   };
@@ -126,15 +130,15 @@ $( document ).ready( function () {
     // game.debug.octree(game.physics.isoArcade.octree);
   };
 
-  var mirrorMyself = function ( player, ghost ) {
+  var mirrorMyself = function ( player, aGhost ) {
     // console.log( "Ghosts:", ghost.name );
     // console.log( "Player:", player.name );
 
-    if ( ghost.name !== player.name ) {
+    if ( aGhost.name !== player.name ) {
       // ghosts.forEach( function ( g ) {
       //   g.kill();
       // } );
-      ghost.kill();
+      aGhost.kill();
       spawned++;
       if ( spawned === 10 ) {
         spawnLittle();
@@ -144,8 +148,11 @@ $( document ).ready( function () {
     } else {
       ghosts.forEach( function ( g ) {
         g.kill();
-        winAnimation();
+        player.kill();
       } );
+
+      // ghost.physics.arcade.collide( player, boss );
+      winAnimation();
     }
 
   };
@@ -206,7 +213,11 @@ $( document ).ready( function () {
   };
 
   var winAnimation = function() {
-
+    scene = ghost.add.isoSprite( 0, 50, 1, 'ghost-scene', 0);
+    scene.animations.add('ghost-freak', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 12, true);
+    // player = ghost.add.isoSprite( 250, 250, 1, 'hero', 4 );
+    // scene.physics.arcade.enable( player );
+    scene.animations.play('ghost-freak');
   };
 
   }
