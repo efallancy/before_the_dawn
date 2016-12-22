@@ -12,9 +12,16 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require lib/jquery.min.js
+//= require lib/highlight.pack.js
+//= require lib/TweenMax.min.js
+//= require lib/ScrollMagic.js
+//= require lib/animation.gsap.min.js
+//= require lib/debug.addIndicators.min.js
 //= require phaser.min.js
 //= require phaser-plugin-isometric.min.js
-//= require stars
+//= require scroll
+// require stars
 //= require ghost
 //= require leap
 //= require boss
