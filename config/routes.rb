@@ -1,13 +1,11 @@
 Rails.application.routes.draw do
   root 'pages#ghost'
-  
+
   get 'pages/ghost'
 
   get 'pages/about'
 
   get 'pages/leap'
-
-  get 'pages/maze'
 
   get 'pages/boss'
 
