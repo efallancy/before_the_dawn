@@ -264,18 +264,7 @@ function bossHit ( player, boss ) {
     game.physics.arcade.collide( player, boss );
 
     // sweet alert: lose
-    // swal({
-    //   title: "Oh no!",
-    //   text: "You lose :( Don't give up!",
-    //   type: "error",
-    //   showCancelButton: false,
-    //   confirmButtonColor: "#DD6B55",
-    //   confirmButtonText: "Try again",
-    //   closeOnConfirm: false,
-    // },
-    // function(){
-    //     window.location.href = '/pages/boss';
-    // });
+    
     // pop up - retry message:
     var modalReplayBoss = new gameModal( game );
     modalReplayBoss.createModal({
@@ -286,29 +275,29 @@ function bossHit ( player, boss ) {
               itemsArr: [
                           {
                             type: "text",
-                                content: "Oops x.x",
-                                fontFamily: "Courier New",
-                                fontSize: 42,
-                                color: "0xfb387c",
-                                offsetY: -140
+                            content: "Oops x.x",
+                            fontFamily: "Courier New",
+                            fontSize: 42,
+                            color: "0xfb387c",
+                            offsetY: -140
                           },
                           {
                             type: "text",
-                              content: "Don't give up! Try again.",
-                              fontFamily: "Courier New",
-                              fontSize: 18,
-                              color: "0xfb387c",
-                              offsetY: -80
+                            content: "Don't give up! Try again.",
+                            fontFamily: "Courier New",
+                            fontSize: 18,
+                            color: "0xfb387c",
+                            offsetY: -80
                           },
                           {
-                                type: "image",
-                                content: "play_button",
-                                offsetY: -20,
-                                offsetX: 0,
-                                contentScale: 0.5,
-                                callback: function(){
-                                   window.location.href = "/pages/boss";
-                                }
+                            type: "image",
+                            content: "play_button",
+                            offsetY: -20,
+                            offsetX: 0,
+                            contentScale: 0.5,
+                            callback: function(){
+                               window.location.href = "/pages/boss";
+                            }
                           }
                         ]
      });
