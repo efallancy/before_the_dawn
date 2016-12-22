@@ -17,4 +17,5 @@
 //= require stars
 //= require ghost
 //= require leap
+//= require boss
 // require_tree .
