@@ -16,7 +16,6 @@ $( document ).ready( function () {
 
   function preload () {
     ghost.load.image( 'ghostly', '<%= image_path( "ghost.png" ) %>' );
-    ghost.load.image( 'tile', '<%= image_path( "stone_n.png" ) %>' );
     ghost.load.image('sky', '<%= image_path( "sky-fa.png") %>' );
     ghost.load.spritesheet( 'hero', '<%= image_path("hero.png") %>', 45, 48);
 
@@ -110,7 +109,7 @@ $( document ).ready( function () {
 
   function render () {
     ghost.debug.text("Knock over the clown to find your own ghost!", 2, 36, "#ff2222");
-    ghost.debug.text(ghost.time.fps || '--', 2, 14, "#a7aebe");
+    // ghost.debug.text(ghost.time.fps || '--', 2, 14, "#a7aebe");
 
     // Uncomment this to see the debug bodies.
     // isoGroup.forEach(function (currentCube) {
