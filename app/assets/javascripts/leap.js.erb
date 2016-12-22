@@ -7,12 +7,13 @@ function preload() {
 
   game.load.image('sky', '<%= asset_path( "assets/sky-fa.png") %>' );
   game.load.image('ground', '<%= asset_path ("assets/platform.png") %>' );
+  game.load.image('cliff', '<%= asset_path ("assets/space-cliff.png") %>' );
   game.load.image('star', '<%= asset_path("assets/star.png") %>');
   game.load.spritesheet('hero', '<%= asset_path("assets/hero.png") %>', 45, 48);
   // game.load.spritesheet('enemy', 'assets/baddie.png', 32, 48);
-  game.load.image('barrier', '<%= asset_path("assets/diamond.png") %>');
+  game.load.spritesheet('enemy', '<%= asset_path("assets/space-enemy.png") %>', 42, 30);
 
-  game.world.setBounds(0, 0, 800, 1800);
+  game.world.setBounds(0, 0, 800, 2400);
 
 }
 
@@ -23,7 +24,7 @@ var cursors;
 var stars;
 var score = 0;
 var scoreText;
-var barriers;
+var enemies;
 var bg;
 var life = 3;
 
@@ -54,7 +55,7 @@ function create() {
   ground.body.immovable = true;
 
   // generating the cliff
-  var cliff = platforms.create(0, 60, 'ground');
+  var cliff = platforms.create(0, 60, 'cliff');
   cliff.body.immovable = true;
 
   // creating our hero - check image file
@@ -78,19 +79,26 @@ function create() {
   // stop our player getting lost
   player.body.collideWorldBounds = true;
 
-  // create barriers
-  barriers = game.add.group();
-  barriers.enableBody = true;
+  // create enemy
+  enemies = game.add.group();
+  enemies.enableBody = true;
   // barriers.body.immovable = true;
 
-  // generate 12 barriers
+  // generate enemies
 
-  for (var i = 0; i < 12; i++) {
+  var createEnemies = function (height) {
+  for (var i = 0; i < 6; i++) {
 
-    var barrier = barriers.create(i * 60, (Math.random() * 1600 + i)+100, 'barrier');
-    barrier.body.immovable = true;
+    var enemy = enemies.create(i * 120, (Math.random() * 600) + height, 'enemy');
+    enemy.body.immovable = true;
 
   }
+};
+
+createEnemies(100);
+createEnemies(700);
+createEnemies(1300);
+createEnemies(2000);
 
   //  Our controls.
   cursors = game.input.keyboard.createCursorKeys();
@@ -118,9 +126,11 @@ function create() {
   };
 
   createStars(100);
-  createStars(600);
-  createStars(1000);
-  createStars(1200);
+  createStars(500);
+  createStars(900);
+  createStars(1300);
+  createStars(1600);
+  createStars(1900);
 
     // The Score
 
@@ -178,7 +188,7 @@ function update() {
     game.physics.arcade.overlap(player, stars, collectStar, null, this);
 
     // collide with barrier
-    game.physics.arcade.collide(player, barriers, hitBarrier, null, this);
+    game.physics.arcade.collide(player, enemies, hitEnemy, null, this);
 
     // if player is on the ground
 
@@ -201,7 +211,7 @@ function collectStar (player, star) {
 
 }
 
-function hitBarrier (player, barrier) {
+function hitEnemy (player, enemy) {
   console.log("Life -1");
   // update life
 
@@ -217,9 +227,10 @@ function hitBarrier (player, barrier) {
 
 function checkWin () {
     console.log("checkWin is ran");
-    if (score === 200){
+    if (score === 200) {
     alert('You win!');
-    }else{
+    }
+    else{
       console.log("you are loser forever!");
     }
   }
