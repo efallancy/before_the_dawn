@@ -17,4 +17,5 @@
 //= require ghost
 //= require leap
 //= require maze
+//= require boss
 // require_tree .

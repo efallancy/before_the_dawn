@@ -1,0 +1,223 @@
+$( document ).ready( function () {
+  if ( $( "#boss" ).length ) {
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'boss', { preload: preload, create: create, update: update });
+
+function preload() {
+
+  game.load.image('background', '<%= asset_path("assets/sky.png") %>');
+  game.load.image('ground', '<%= asset_path("assets/platform.png") %>');
+  game.load.image('weapon_1', '<%= asset_path("assets/heart.png") %>');
+  game.load.image('bullet_1', '<%= asset_path("assets/heart.png") %>');
+  game.load.image('weapon_2', '<%= asset_path("assets/star.png") %>');
+  game.load.image('bullet_2', '<%= asset_path("assets/laser-pew.png") %>');
+  game.load.spritesheet('hero', '<%= asset_path("assets/hero.png") %>', 45, 48);
+  game.load.spritesheet('boss', '<%= asset_path("assets/boss.png") %>', 82, 80);
+
+  game.world.setBounds(0, 0, 800, 600);
+
+}
+
+var player;
+var platforms;
+var ground;
+var cursors;
+var weapon;
+var bullets;
+var pewRate = 500;
+var nextPew = 0;
+var boss;
+var heroHP = 3;
+var bossHP = 100;
+var shootButton;
+var facing;
+//
+// var Bullet = function (game, key) {
+//
+//   Phaser.Sprite.call(this, game, 0, 0, key);
+//
+//   this.texture.baseTexture.scaleMode = PIXI.scaleModes.NEAREST;
+//
+//   this.anchor.set(0.5);
+//
+//   this.checkForWorldBounds
+// }
+
+function create() {
+
+  game.physics.startSystem(Phaser.Physics.ARCADE);
+
+
+  // TEMPORARY 2D BACKGROUND
+  game.add.sprite(0, 0, 'background');
+
+  // TEMPORARY 2D GROUND
+  platforms = game.add.group();
+  platforms.enableBody = true;
+  ground = platforms.create(0, game.world.height - 64, 'ground');
+  ground.scale.setTo(2, 2);
+  ground.body.immovable = true;
+
+  // HERO
+  player = game.add.sprite(350, game.world.height = 0, 'hero');
+
+  // enable physics on our hero
+  game.physics.arcade.enable(player);
+
+  // player physics properties
+  player.body.bounce.y = 0;
+  player.body.gravity.y = 150;
+  player.body.collideWorldsBounds = true;
+
+  //  Our two animations, walking left and right.
+  player.animations.add('right', [0, 1, 2, 3], 10, true);
+  player.animations.add('left', [5, 6, 7, 8], 10, true);
+
+  // stop our player getting lost
+  player.body.collideWorldBounds = true;
+
+  // BOSS BITCH
+  boss = game.add.sprite(500, game.world.height = 0, 'boss');
+  game.physics.arcade.enable(boss);
+  boss.body.bounce.y = 0.2;
+  boss.body.gravity.y = 120;
+  boss.body.collideWorldsBounds = true;
+  boss.animations.add('right' [0, 1], 10, true);
+  boss.animations.add('left', [3, 4], 10, true);
+  boss.body.collideWorldBounds = true;
+
+  // PEW PEW MOTHERFUCKER
+  bullets = game.add.group();
+  bullets.enableBody = true;
+  bullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+  // bullets.createMultiple(1, 'bullet_1');
+  bullets.setAll('checkWorldBounds', true);
+  bullets.setAll('outofBoundsKill', true);
+
+
+  // CONTROLS
+  cursors = game.input.keyboard.createCursorKeys();
+  shootButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+  // LIFE POINTS
+  heroHPStatus = game.add.text(30, 16, 'LIFE: 3', {fontSize: '32px', fill: '#FFF'});
+  heroHPStatus.fixedToCamera = true;
+  heroHPStatus.cameraOffset.setTo(30, 16);
+
+  bossHPStatus = game.add.text(640, 16, 'LIFE: ??', {fontSize: '32px', fill: '#FFF'});
+  bossHPStatus.fixedToCamera = true;
+  bossHPStatus.cameraOffset.setTo(640, 16);
+}
+
+function update() {
+
+  // collide player & boss with ground
+  game.physics.arcade.collide(player, ground);
+  game.physics.arcade.collide(boss, ground);
+
+  // PLAYER MOVEMENT
+  player.body.velocity.x = 0;
+
+  if (cursors.left.isDown) {
+
+    // Move to the left
+    player.body.velocity.x = -150;
+    player.animations.play('left');
+    facing = 'left';
+  }
+  else if (cursors.right.isDown) {
+
+    // Move to the right
+    player.body.velocity.x = 150;
+    player.animations.play('right');
+    facing = 'right';
+  }
+  else {
+    // Stand Still
+    player.animations.stop();
+    player.frame = 4;
+  }
+
+  // Player Jump
+  if (cursors.up.isDown && player.body.touching.down) {
+    player.body.velocity.y = -300;
+  }
+
+  if (shootButton.isDown) {
+    pew();
+
+  // make boss chase player
+  game.physics.arcade.moveToObject(boss, player, 2000, 1000);
+
+  if (boss.body.velocity.x > 0) {
+    boss.animations.play('left');
+  } else {
+    boss.animations.play('right');
+  }
+
+  }
+
+  // Boss collides with character -hp
+    // ! ISSUE: PLAYER DIES RIGHT AWAY
+  game.physics.arcade.collide(player, boss, bossHit, null, this);
+
+  // Character shoots boss -hp
+  game.physics.arcade.overlap(bullets, boss, directHit, null, this);
+
+}
+
+// Shooting function, obviously
+function pew() {
+  if (game.time.now > nextPew && bossHP > 0) {
+    nextPew = game.time.now + pewRate;
+    var bullet;
+    if (facing == "right") {
+      bullet = bullets.create(player.body.x + player.body.width / 2 + 20, player.body.y + player.body.height / 2 - 4, 'bullet_1');
+    }
+    else {
+      bullet = bullets.create(player.body.x + player.body.width / 2 - 20, player.body.y + player.body.height / 2- 4, "bullet_1");
+    }
+
+    game.physics.enable(bullet, Phaser.Physics.ARCADE);
+    bullet.outofBoundsKill = true;
+    bullet.anchor.setTo(0.5, 0.5);
+    bullet.body.velocity.y = 0;
+    if (facing == "right") {
+      bullet.body.velocity.x = 400;
+    } else {
+      bullet.body.velocity.x = -400;
+    }
+    // bullet.reset(player.x - 8, player.y - 8);
+    // game.physics.arcade.moveToPointer(bullet, 300);
+  }
+}
+
+// When Player & Boss collide -= heroHP
+function bossHit(player, boss) {
+  heroHP -= 1;
+  heroHPStatus.text = "LIFE: " + heroHP;
+  console.log("Ouch! Life: -1");
+  if (heroHP <= 0) {
+    player.kill();
+    alert("Game Over! x.x");
+  }
+}
+
+// When Player's bullet hits boss -= bossHP
+  // ! ISSUE: WHY DOES MORE THAN ONE BULLET FIRE?!
+function directHit() {
+  bossHP -= 0.5;
+  bossHPStatus.text = "LIFE: " + bossHP;
+  // bullets.kill();
+  console.log("Direct hit!");
+  console.log(bossHP);
+  if (bossHP <= 0) {
+    boss.kill();
+    alert("Congratulations! Winner, winner chicken dinner!");
+  }
+
+}
+
+}
+} );
