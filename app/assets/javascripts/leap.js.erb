@@ -29,6 +29,7 @@ function preload() {
 
 var player;
 var platforms;
+var cliff;
 var ground;
 var cursors;
 var stars;
@@ -103,7 +104,7 @@ function create() {
   ground.body.immovable = true;
 
   // generating the cliff
-  var cliff = platforms.create(0, 60, 'cliff');
+  cliff = platforms.create(0, 60, 'cliff');
   cliff.body.immovable = true;
 
   // creating our hero - check image file
@@ -178,7 +179,7 @@ createEnemies(1700);
   createStars(900);
   createStars(1300);
   createStars(1600);
-  createStars(1900);
+  createStars(1800);
 
     // The Score
 
@@ -196,8 +197,8 @@ createEnemies(1700);
 
 function update() {
 
-  // collide player with platforms
-  game.physics.arcade.collide(player, platforms);
+  // collide player with cliff
+  game.physics.arcade.collide(player, cliff);
   //  game.physics.arcade.collide(stars, ground);
   //  game.physics.arcade.overlap(player, barriers);
 
@@ -303,11 +304,53 @@ function update() {
 
   function checkWin () {
       console.log("checkWin ran");
-      if (score >= 150) {
+      console.log(score);
+      if (score < 150) {
+        // pop up - lose
+        console.log("you are loser forever!");
+        player.kill();
+
+        var modalYo = new gameModal( game );
+        modalYo.createModal({
+                  type: "modalYouLose",
+                  includeBackground: true,
+                  backgroundColor: "0xFFFFFF",
+                  modalCloseOnInput: true,
+                  itemsArr: [
+                              {
+                                type: "text",
+                                    content: "Oh noes!",
+                                    fontFamily: "Courier New",
+                                    fontSize: 42,
+                                    color: "0xfb387c",
+                                    offsetY: -140
+                              },
+                              {
+                                type: "text",
+                                  content: "You didn't collect enough star power. \nDon't give up! Try again.",
+                                  fontFamily: "Courier New",
+                                  fontSize: 18,
+                                  color: "0xfb387c",
+                                  offsetY: -40
+                              },
+                              {
+                                type: "image",
+                                  content: "play_button",
+                                  offsetY: 80,
+                                  offsetX: 0,
+                                  contentScale: 0.5,
+                                  callback: function(){
+                                     window.location.href = "/pages/ghost";
+                                   }
+                              }
+                            ]
+         });
+        modalYo.showModal("modalYouLose");
+      } else {
         // sweet alert - win
         var modalWin2 = new gameModal( game );
         modalWin2.createModal({
-                  type:"modalLeapWin",
+                  type: "modalLeapWin",
                   includeBackground: true,
                   backgroundColor: "0xFFFFFF",
                   modalCloseOnInput: true,
@@ -342,45 +385,45 @@ function update() {
          });
          modalWin2.showModal("modalLeapWin");
       }
-      else {
-        console.log("you are loser forever!");
-        var modalReplay = new gameModal( game );
-        modalReplay.createModal({
-                  type:"modalLeapLose",
-                  includeBackground: true,
-                  backgroundColor: "0xFFFFFF",
-                  modalCloseOnInput: true,
-                  itemsArr: [
-                              {
-                                type: "text",
-                                    content: "Oh noes!",
-                                    fontFamily: "Courier New",
-                                    fontSize: 42,
-                                    color: "0xfb387c",
-                                    offsetY: -140
-                              },
-                              {
-                                type: "text",
-                                  content: "You didn't collect enough star power. \nDon't give up! Try again.",
-                                  fontFamily: "Courier New",
-                                  fontSize: 18,
-                                  color: "0xfb387c",
-                                  offsetY: -40
-                              },
-                              {
-                                type: "image",
-                                  content: "play_button",
-                                  offsetY: 80,
-                                  offsetX: 0,
-                                  contentScale: 0.5,
-                                  callback: function(){
-                                     window.location.href = "/pages/ghost";
-                                   }
-                              }
-                            ]
-         });
-        modalReplay.showModal("modalLeapLose");
-      }
+      // else {
+      //   console.log("you are loser forever!");
+      //   var modalReplay = new gameModal( game );
+      //   modalReplay.createModal({
+      //             type:"modalLeapLose",
+      //             includeBackground: true,
+      //             backgroundColor: "0xFFFFFF",
+      //             modalCloseOnInput: true,
+      //             itemsArr: [
+      //                         {
+      //                           type: "text",
+      //                               content: "Oh noes!",
+      //                               fontFamily: "Courier New",
+      //                               fontSize: 42,
+      //                               color: "0xfb387c",
+      //                               offsetY: -140
+      //                         },
+      //                         {
+      //                           type: "text",
+      //                             content: "You didn't collect enough star power. \nDon't give up! Try again.",
+      //                             fontFamily: "Courier New",
+      //                             fontSize: 18,
+      //                             color: "0xfb387c",
+      //                             offsetY: -40
+      //                         },
+      //                         {
+      //                           type: "image",
+      //                             content: "play_button",
+      //                             offsetY: 80,
+      //                             offsetX: 0,
+      //                             contentScale: 0.5,
+      //                             callback: function(){
+      //                                window.location.href = "/pages/ghost";
+      //                              }
+      //                         }
+      //                       ]
+      //    });
+      //   modalReplay.showModal("modalLeapLose");
+      // }
     };
 
   }
