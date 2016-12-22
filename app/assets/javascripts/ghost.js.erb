@@ -19,7 +19,7 @@ $( document ).ready( function () {
     ghost.load.image( 'ghostly', '<%= image_path( "ghost.png" ) %>' );
     ghost.load.image('sky', '<%= image_path( "sky-fa.png") %>' );
     ghost.load.spritesheet( 'hero', '<%= image_path("hero.png") %>', 45, 48);
-    ghost.load.spritesheet('ghost-scene', '<%= image_path("test-scene.png") %>' );
+    ghost.load.atlasJSONHash('ghostScene', '<%= image_path("ghosting.png") %>', '<%= image_path("ghosting.json") %>' );
 
     ghost.time.advancedTiming = true;
 
@@ -150,9 +150,8 @@ $( document ).ready( function () {
         g.kill();
         player.kill();
       } );
-
-      // ghost.physics.arcade.collide( player, boss );
       winAnimation();
+      // ghost.physics.arcade.collide( player, boss );
     }
 
   };
@@ -213,11 +212,13 @@ $( document ).ready( function () {
   };
 
   var winAnimation = function() {
-    scene = ghost.add.isoSprite( 0, 50, 1, 'ghost-scene', 0);
-    scene.animations.add('ghost-freak', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 12, true);
+    player.loadTexture('ghostScene', 1);
+    // scene = ghost.add.isoSprite( 0, 50, 1, 'ghost-scene', 0);
+    player.animations.add('ghost-freak', Phaser.Animation.generateFrameNames('ghosting', 1, 31), 10, true);
     // player = ghost.add.isoSprite( 250, 250, 1, 'hero', 4 );
     // scene.physics.arcade.enable( player );
-    scene.animations.play('ghost-freak');
+    player.animations.play('ghost-freak');
+    console.log("winAnimation ran");
   };
 
   }
