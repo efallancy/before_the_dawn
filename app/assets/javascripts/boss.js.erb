@@ -35,7 +35,7 @@ var pewRate = 500;
 var nextPew = 0;
 var boss;
 var heroHP = 100;
-var bossHP = 10;
+var bossHP = 100;
 var shootButton;
 var facing = "right";
 var weapon = "bullet_2";
@@ -333,72 +333,77 @@ function directHit() {
   if (bossHP <= 0) {
     boss.kill();
 
-    // TODO: I'm here SAMANTHA
+
     if ( weapon === "bullet_1" ) {
-      // sweet alert: win!
-      swal({
-        title: "KO! You win!!",
-        text: "Congratulations!",
-        type: "success",
-        showCancelButton: false,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Woohoo! I'm the best!",
-        closeOnConfirm: true,
-      });
-    } else {
-      // sweet alert: lose
-      swal({
-        title: "You lose!",
-        text: "You lose as you fight with violence. Spread some love!",
-        type: "error",
-        showCancelButton: false,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Try again",
-        closeOnConfirm: false,
-      });
-    }
 
-
-    // pop up: winner
-    var modalBossKO = new gameModal( game );
-    modalBossKO.createModal({
-              type:"modalWinner",
-              includeBackground: true,
-              backgroundColor: "0xFFFFFF",
-              modalCloseOnInput: true,
-              itemsArr: [
-                          {
-                            type: "text",
-                                content: "KO! You win!!",
+      // IF BOSS KILLED && WEAPON = HEART, POP UP MESSAGE: WINNER
+      var modalBossWIN = new gameModal( game );
+      modalBossWIN.createModal({
+                type:"modalWinner",
+                includeBackground: true,
+                backgroundColor: "0xFFFFFF",
+                modalCloseOnInput: true,
+                itemsArr: [
+                            {
+                              type: "text",
+                                  content: "Killed it with kindness!",
+                                  fontFamily: "Courier New",
+                                  fontSize: 42,
+                                  color: "0xfb387c",
+                                  offsetY: -140
+                            },
+                            {
+                              type: "text",
+                                content: "Congratulations! \nWhat adventure will you go on next?",
                                 fontFamily: "Courier New",
-                                fontSize: 42,
+                                fontSize: 18,
                                 color: "0xfb387c",
-                                offsetY: -140
-                          },
-                          {
-                            type: "text",
-                              content: "Congratulations! \nWhat adventure will you go on next?",
-                              fontFamily: "Courier New",
-                              fontSize: 18,
-                              color: "0xfb387c",
-                              offsetY: -40
-                          },
-                          {
-                            type: "image",
-                              content: "play_button",
-                              offsetY: 80,
-                              offsetX: 0,
-                              contentScale: 0.5,
-                              callback: function(){
-                               modal.hideModal( "modalWinner" );
-                              }
-                          }
-                        ]
-     });
-     modalBossKO.showModal("modalWinner");
+                                offsetY: -40
+                            }
+                          ]
+       });
+       modalBossWIN.showModal("modalWinner");
 
-  }
+    } else {
+      // IF BOSS KILLED && WEAPON = LASER, POP UP MESSAGE: LOSE
 
+      var modalBossKO = new gameModal( game );
+      modalBossKO.createModal({
+        type: "modalBoo",
+        includeBackground: true,
+        backgroundColor: "0xFFFFFF",
+        modalCloseOnInput: true,
+        itemsArr: [
+                    {
+                      type: "text",
+                      content: "You lose!",
+                      fontFamily: "Courier New",
+                      fontSize: 42,
+                      color: "0xfb387c",
+                      offsetY: -140
+                    },
+                    {
+                      type: "text",
+                      content: "You lose as you fight with violence. \nTry spreading some love instead!",
+                      fontFamily: "Courier New",
+                      fontsize: 18,
+                      color: "0xfb387c",
+                      offsetY: -40
+                    },
+                    {
+                      type: "image",
+                      content: "play_button",
+                      offsetY: 80,
+                      offsetX: 0,
+                      contentScale: 0.5,
+                      callback: function() {
+                        window.location.href = "/pages/boss"
+                      }
+                    }
+        ]
+      });
+      modalBossKO.showModal("modalBoo");
+    }
 }
 
 var createLedges = function () {
@@ -411,4 +416,5 @@ var createLedges = function () {
 };
 
 }
-} );
+}
+});
