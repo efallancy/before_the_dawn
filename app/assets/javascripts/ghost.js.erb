@@ -21,6 +21,8 @@ $( document ).ready( function () {
     ghost.load.spritesheet( 'hero', '<%= image_path("hero.png") %>', 45, 48);
     ghost.load.atlasJSONHash('ghostScene', '<%= image_path("ghosting_4.png") %>', '<%= image_path("ghosting_4.json") %>' );
 
+    ghost.load.image( 'play_button', '<%= image_path( "play_button.png" ) %>' );
+
     ghost.time.advancedTiming = true;
 
     // Add and enable the plug-in.
@@ -41,45 +43,42 @@ $( document ).ready( function () {
     bg.fixedToCamera = true;
 
     // pop up
-    // var modal = new gameModal( ghost );
-    // modal.createModal({
-    //           type:"modalStartGhost",
-    //           includeBackground: true,
-    //           modalCloseOnInput: true,
-    //           itemsArr: [
-    //             					{
-    //                         type: "text",
-    //                             content: "Confront the ghost of your past",
-    //                             fontFamily: "Lucky guy",
-    //                             fontSize: 42,
-    //                             color: "0xfb387c",
-    //                             offsetY: -80
-    //                       },
-    //                       {
-    //                             type: "button",
-    //                             content: "heart_modal",
-    //                             offsetY: 20,
-    //                             offsetX: 80,
-    //                             contentScale: 0.5,
-    //                             callback: function(){
-    //                                modal.hideModal( "modalStartGhost" );
-    //                             }
-    //                       },
-    //                       {
-    //                             type: "image",
-    //                             content: "gun_modal",
-    //                             offsetY: 20,
-    //                             offsetX: -80,
-    //                             contentScale: 0.5,
-    //                             callback: function () {
-    //                                 weapon = "bullet_2";
-    //                                 console.log( weapon );
-    //                                 modal.hideModal( "modalWeapon" );
-    //                             }
-    //                       }
-    //                     ]
-    //  });
-    //  modal.showModal("modalStartGhost");
+    var modal = new gameModal( ghost );
+    modal.createModal({
+              type:"modalStartGhost",
+              includeBackground: true,
+              backgroundColor: "0xFFFFFF",
+              modalCloseOnInput: true,
+              itemsArr: [
+                					{
+                            type: "text",
+                                content: "Chasing Ghosts",
+                                fontFamily: "Courier New",
+                                fontSize: 42,
+                                color: "0xfb387c",
+                                offsetY: -140
+                          },
+                          {
+                            type: "text",
+                              content: "Confront the right ghost from your past...",
+                              fontFamily: "Courier New",
+                              fontSize: 24,
+                              color: "0xfb387c",
+                              offsetY: -80
+                          },
+                          {
+                                type: "image",
+                                content: "play_button",
+                                offsetY: -25,
+                                offsetX: 0,
+                                contentScale: 0.5,
+                                callback: function(){
+                                   modal.hideModal( "modalStartGhost" );
+                                }
+                          }
+                        ]
+     });
+     modal.showModal("modalStartGhost");
 
     ghosts = ghost.add.group();
 
@@ -153,7 +152,7 @@ $( document ).ready( function () {
   };
 
   function render () {
-    ghost.debug.text("Knock over the clown to find your own ghost!", 2, 36, "#ff2222");
+    // ghost.debug.text("Knock over the clown to find your own ghost!", 2, 36, "#ff2222");
     // ghost.debug.text(ghost.time.fps || '--', 2, 14, "#a7aebe");
 
     // Uncomment this to see the debug bodies.
@@ -256,10 +255,48 @@ $( document ).ready( function () {
     player.loadTexture('ghostScene', 1);
     // scene = ghost.add.isoSprite( 0, 50, 1, 'ghost-scene', 0);
     player.animations.add('ghost-freak', Phaser.Animation.generateFrameNames('ghosting', 1, 31), 10, true);
+    player.body.x = 300;
+    player.body.y = 300;
     // player = ghost.add.isoSprite( 250, 250, 1, 'hero', 4 );
     // scene.physics.arcade.enable( player );
     player.animations.play('ghost-freak');
     console.log("winAnimation ran");
+    var modalWin = new gameModal( ghost );
+    modalWin.createModal({
+              type:"modalGhostWin",
+              includeBackground: true,
+              backgroundColor: "0xFFFFFF",
+              modalCloseOnInput: true,
+              itemsArr: [
+                					{
+                            type: "text",
+                                content: "Woohoo!",
+                                fontFamily: "Courier New",
+                                fontSize: 42,
+                                color: "0xfb387c",
+                                offsetY: -140
+                          },
+                          {
+                            type: "text",
+                              content: "Congratulations! \nYou sure put that ghost to bed \nwith plenty of good juju and karma to spare. \nDare you continue on to the next \nlevel like a baws?",
+                              fontFamily: "Courier New",
+                              fontSize: 18,
+                              color: "0xfb387c",
+                              offsetY: -40
+                          },
+                          {
+                                type: "image",
+                                content: "play_button",
+                                offsetY: 80,
+                                offsetX: 0,
+                                contentScale: 0.5,
+                                callback: function(){
+                                   window.location.href = "/pages/boss";
+                                }
+                          }
+                        ]
+     });
+     modalWin.showModal("modalGhostWin");
   };
 
   }

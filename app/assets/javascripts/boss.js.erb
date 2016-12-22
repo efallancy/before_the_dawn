@@ -16,6 +16,8 @@ function preload() {
   game.load.spritesheet('hero', '<%= image_path( "hero.png" ) %>', 45, 48);
   game.load.spritesheet('boss', '<%= image_path( "boss-fa.png" ) %>', 80, 80);
 
+  game.load.image( 'play_button', '<%= image_path( "play_button.png" ) %>' );
+
   game.world.setBounds(0, 0, 800, 600);
 
 
@@ -31,7 +33,7 @@ var pewRate = 500;
 var nextPew = 0;
 var boss;
 var heroHP = 100;
-var bossHP = 100;
+var bossHP = 10;
 var shootButton;
 var facing = "right";
 var weapon = "bullet_2";
@@ -58,12 +60,13 @@ function create() {
   modal.createModal({
             type:"modalWeapon",
             includeBackground: true,
+            backgroundColor: "0xFFFFFF",
             modalCloseOnInput: true,
             itemsArr: [
               					{
                           type: "text",
                               content: "Choose your weapon!",
-                              fontFamily: "Lucky guy",
+                              fontFamily: "Courier New",
                               fontSize: 42,
                               color: "0xfb387c",
                               offsetY: -80
@@ -263,18 +266,55 @@ function bossHit ( player, boss ) {
     game.physics.arcade.collide( player, boss );
 
     // sweet alert: lose
-    swal({
-      title: "Oh no!",
-      text: "You lose :( Don't give up!",
-      type: "error",
-      showCancelButton: false,
-      confirmButtonColor: "#DD6B55",
-      confirmButtonText: "Try again",
-      closeOnConfirm: false,
-    },
-    function(){
-        window.location.href = '/pages/boss';
-    });
+    // swal({
+    //   title: "Oh no!",
+    //   text: "You lose :( Don't give up!",
+    //   type: "error",
+    //   showCancelButton: false,
+    //   confirmButtonColor: "#DD6B55",
+    //   confirmButtonText: "Try again",
+    //   closeOnConfirm: false,
+    // },
+    // function(){
+    //     window.location.href = '/pages/boss';
+    // });
+    // pop up - retry message:
+    var modalReplayBoss = new gameModal( game );
+    modalReplayBoss.createModal({
+              type:"modalBossReplay",
+              includeBackground: true,
+              backgroundColor: "0xFFFFFF",
+              modalCloseOnInput: true,
+              itemsArr: [
+                          {
+                            type: "text",
+                                content: "Oops x.x",
+                                fontFamily: "Courier New",
+                                fontSize: 42,
+                                color: "0xfb387c",
+                                offsetY: -140
+                          },
+                          {
+                            type: "text",
+                              content: "Don't give up! Try again.",
+                              fontFamily: "Courier New",
+                              fontSize: 18,
+                              color: "0xfb387c",
+                              offsetY: -80
+                          },
+                          {
+                                type: "image",
+                                content: "play_button",
+                                offsetY: -20,
+                                offsetX: 0,
+                                contentScale: 0.5,
+                                callback: function(){
+                                   window.location.href = "/pages/boss";
+                                }
+                          }
+                        ]
+     });
+     modalReplayBoss.showModal("modalBossReplay");
 
     player = game.add.sprite( 200, game.world.height / 2, 'dead_hero' );
     game.physics.arcade.enable( player );
@@ -297,16 +337,43 @@ function directHit() {
   if (bossHP <= 0) {
     boss.kill();
 
-    // sweet alert: win!
-    swal({
-      title: "KO! You win!!",
-      text: "Congratulations!",
-      type: "success",
-      showCancelButton: false,
-      confirmButtonColor: "#DD6B55",
-      confirmButtonText: "Woohoo! I'm the best!",
-      closeOnConfirm: true,
-    });
+    // pop up: winner
+    var modalBossKO = new gameModal( game );
+    modalBossKO.createModal({
+              type:"modalWinner",
+              includeBackground: true,
+              backgroundColor: "0xFFFFFF",
+              modalCloseOnInput: true,
+              itemsArr: [
+                          {
+                            type: "text",
+                                content: "KO! You win!!",
+                                fontFamily: "Courier New",
+                                fontSize: 42,
+                                color: "0xfb387c",
+                                offsetY: -140
+                          },
+                          {
+                            type: "text",
+                              content: "Congratulations! \nWhat adventure will you go on next?",
+                              fontFamily: "Courier New",
+                              fontSize: 18,
+                              color: "0xfb387c",
+                              offsetY: -40
+                          },
+                          {
+                                type: "image",
+                                content: "play_button",
+                                offsetY: 80,
+                                offsetX: 0,
+                                contentScale: 0.5,
+                                callback: function(){
+                                   window.location.href = "/pages/boss";
+                                }
+                          }
+                        ]
+     });
+     modalBossKO.showModal("modalWinner");
   }
 
 }
