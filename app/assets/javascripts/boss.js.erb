@@ -5,7 +5,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'boss', { preload: preload, cr
 
 function preload() {
 
-  game.load.image('background', '<%= image_path( "sky.png" ) %>');
+  game.load.image('background', '<%= image_path( "sky-bnw.png" ) %>');
   game.load.image('ground', '<%= image_path( "platform.png" ) %>');
   game.load.image('weapon_1', '<%= image_path( "heart.png" ) %>');
   game.load.image('bullet_1', '<%= image_path( "heart.png" ) %>');
@@ -13,7 +13,7 @@ function preload() {
   game.load.image('bullet_2', '<%= image_path( "laser-pew.png" ) %>');
   game.load.image( 'dead_hero', '<%= image_path( "dead-hero.png" ) %>' );
   game.load.spritesheet('hero', '<%= image_path( "hero.png" ) %>', 45, 48);
-  game.load.spritesheet('boss', '<%= image_path( "boss.png" ) %>', 82, 80);
+  game.load.spritesheet('boss', '<%= image_path( "boss-fa.png" ) %>', 80, 80);
 
   game.world.setBounds(0, 0, 800, 600);
 
@@ -259,10 +259,7 @@ function directHit() {
       showCancelButton: false,
       confirmButtonColor: "#DD6B55",
       confirmButtonText: "Woohoo! I'm the best!",
-      closeOnConfirm: false,
-    },
-    function(){
-        window.location.href = '/';
+      closeOnConfirm: true,
     });
   }
 
