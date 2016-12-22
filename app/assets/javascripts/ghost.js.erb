@@ -19,7 +19,7 @@ $( document ).ready( function () {
     ghost.load.image( 'ghostly', '<%= image_path( "ghost.png" ) %>' );
     ghost.load.image('sky', '<%= image_path( "sky-fa.png") %>' );
     ghost.load.spritesheet( 'hero', '<%= image_path("hero.png") %>', 45, 48);
-    ghost.load.atlasJSONHash('ghostScene', '<%= image_path("ghosting.png") %>', '<%= image_path("ghosting.json") %>' );
+    ghost.load.atlasJSONHash('ghostScene', '<%= image_path("ghosting_4.png") %>', '<%= image_path("ghosting_4.json") %>' );
 
     ghost.time.advancedTiming = true;
 
@@ -39,6 +39,47 @@ $( document ).ready( function () {
 
     bg = ghost.add.sprite(0, 0, 'sky');
     bg.fixedToCamera = true;
+
+    // pop up
+    // var modal = new gameModal( ghost );
+    // modal.createModal({
+    //           type:"modalStartGhost",
+    //           includeBackground: true,
+    //           modalCloseOnInput: true,
+    //           itemsArr: [
+    //             					{
+    //                         type: "text",
+    //                             content: "Confront the ghost of your past",
+    //                             fontFamily: "Lucky guy",
+    //                             fontSize: 42,
+    //                             color: "0xfb387c",
+    //                             offsetY: -80
+    //                       },
+    //                       {
+    //                             type: "button",
+    //                             content: "heart_modal",
+    //                             offsetY: 20,
+    //                             offsetX: 80,
+    //                             contentScale: 0.5,
+    //                             callback: function(){
+    //                                modal.hideModal( "modalStartGhost" );
+    //                             }
+    //                       },
+    //                       {
+    //                             type: "image",
+    //                             content: "gun_modal",
+    //                             offsetY: 20,
+    //                             offsetX: -80,
+    //                             contentScale: 0.5,
+    //                             callback: function () {
+    //                                 weapon = "bullet_2";
+    //                                 console.log( weapon );
+    //                                 modal.hideModal( "modalWeapon" );
+    //                             }
+    //                       }
+    //                     ]
+    //  });
+    //  modal.showModal("modalStartGhost");
 
     ghosts = ghost.add.group();
 
