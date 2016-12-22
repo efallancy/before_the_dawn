@@ -35,7 +35,7 @@ var pewRate = 500;
 var nextPew = 0;
 var boss;
 var heroHP = 100;
-var bossHP = 10;
+var bossHP = 100;
 var shootButton;
 var facing = "right";
 var weapon = "bullet_2";
@@ -100,7 +100,7 @@ function create() {
 
   ledges = game.add.group();
   ledges.enableBody = true;
-  // createLedges();
+  createLedges();
 
   // HERO
   player = game.add.sprite(250, game.world.height = 0, 'hero');
@@ -167,7 +167,7 @@ function update() {
   game.physics.arcade.collide( boss, ledges );
 
   // PLAYER MOVEMENT
-  // player.body.velocity.x = 0;
+  player.body.velocity.x = 0;
 
   if (cursors.left.isDown) {
 
@@ -406,14 +406,14 @@ function directHit() {
     }
 }
 
-// var createLedges = function () {
-//   ledges.create( 100, 410, 'short_ledge' );
-//   ledges.create( 550, 410, 'short_ledge' );
-//
-//   ledges.forEach( function ( ledge ) {
-//     ledge.body.immovable = true;
-//   })
-// };
+var createLedges = function () {
+  ledges.create( 100, 410, 'short_ledge' );
+  ledges.create( 550, 410, 'short_ledge' );
+
+  ledges.forEach( function ( ledge ) {
+    ledge.body.immovable = true;
+  })
+};
 
 }
 }
