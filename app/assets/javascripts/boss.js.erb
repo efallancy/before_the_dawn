@@ -5,14 +5,15 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'boss', { preload: preload, cr
 
 function preload() {
 
-  game.load.image('background', '<%= asset_path("assets/sky.png") %>');
-  game.load.image('ground', '<%= asset_path("assets/platform.png") %>');
-  game.load.image('weapon_1', '<%= asset_path("assets/heart.png") %>');
-  game.load.image('bullet_1', '<%= asset_path("assets/heart.png") %>');
-  game.load.image('weapon_2', '<%= asset_path("assets/star.png") %>');
-  game.load.image('bullet_2', '<%= asset_path("assets/laser-pew.png") %>');
-  game.load.spritesheet('hero', '<%= asset_path("assets/hero.png") %>', 45, 48);
-  game.load.spritesheet('boss', '<%= asset_path("assets/boss.png") %>', 82, 80);
+  game.load.image('background', '<%= image_path( "sky.png" ) %>');
+  game.load.image('ground', '<%= image_path( "platform.png" ) %>');
+  game.load.image('weapon_1', '<%= image_path( "heart.png" ) %>');
+  game.load.image('bullet_1', '<%= image_path( "heart.png" ) %>');
+  game.load.image('weapon_2', '<%= image_path( "star.png" ) %>');
+  game.load.image('bullet_2', '<%= image_path( "laser-pew.png" ) %>');
+  game.load.image( 'dead_hero', '<%= image_path( "dead-hero.png" ) %>' );
+  game.load.spritesheet('hero', '<%= image_path( "hero.png" ) %>', 45, 48);
+  game.load.spritesheet('boss', '<%= image_path( "boss.png" ) %>', 82, 80);
 
   game.world.setBounds(0, 0, 800, 600);
 
@@ -27,7 +28,7 @@ var bullets;
 var pewRate = 500;
 var nextPew = 0;
 var boss;
-var heroHP = 3;
+var heroHP = 100;
 var bossHP = 100;
 var shootButton;
 var facing;
@@ -78,12 +79,16 @@ function create() {
 
   // BOSS BITCH
   boss = game.add.sprite(500, game.world.height = 0, 'boss');
+
   game.physics.arcade.enable(boss);
+
   boss.body.bounce.y = 0.2;
   boss.body.gravity.y = 120;
   boss.body.collideWorldsBounds = true;
+
   boss.animations.add('right' [0, 1], 10, true);
   boss.animations.add('left', [3, 4], 10, true);
+
   boss.body.collideWorldBounds = true;
 
   // PEW PEW MOTHERFUCKER
@@ -113,8 +118,8 @@ function create() {
 function update() {
 
   // collide player & boss with ground
-  game.physics.arcade.collide(player, ground);
-  game.physics.arcade.collide(boss, ground);
+  game.physics.arcade.collide( player, ground );
+  game.physics.arcade.collide( boss, ground );
 
   // PLAYER MOVEMENT
   player.body.velocity.x = 0;
@@ -140,46 +145,46 @@ function update() {
   }
 
   // Player Jump
-  if (cursors.up.isDown && player.body.touching.down) {
+  if ( cursors.up.isDown && player.body.touching.down ) {
     player.body.velocity.y = -300;
   }
 
-  if (shootButton.isDown) {
+  if ( shootButton.isDown ) {
     pew();
 
-  // make boss chase player
-  game.physics.arcade.moveToObject(boss, player, 2000, 1000);
+    // make boss chase player
+    game.physics.arcade.moveToObject( boss, player, 2000, 1000) ;
 
-  if (boss.body.velocity.x > 0) {
-    boss.animations.play('left');
-  } else {
-    boss.animations.play('right');
-  }
+    if ( boss.body.velocity.x > 0 ) {
+      boss.animations.play('left');
+    } else {
+      boss.animations.play('right');
+    }
 
   }
 
   // Boss collides with character -hp
     // ! ISSUE: PLAYER DIES RIGHT AWAY
-  game.physics.arcade.collide(player, boss, bossHit, null, this);
+  game.physics.arcade.collide( player, boss, bossHit, null, this );
 
   // Character shoots boss -hp
-  game.physics.arcade.overlap(bullets, boss, directHit, null, this);
+  game.physics.arcade.collide( bullets, boss, directHit, null, this );
 
 }
 
 // Shooting function, obviously
-function pew() {
-  if (game.time.now > nextPew && bossHP > 0) {
+function pew () {
+  if ( game.time.now > nextPew && bossHP > 0 ) {
     nextPew = game.time.now + pewRate;
     var bullet;
-    if (facing == "right") {
+    if ( facing == "right" ) {
       bullet = bullets.create(player.body.x + player.body.width / 2 + 20, player.body.y + player.body.height / 2 - 4, 'bullet_1');
     }
     else {
       bullet = bullets.create(player.body.x + player.body.width / 2 - 20, player.body.y + player.body.height / 2- 4, "bullet_1");
     }
 
-    game.physics.enable(bullet, Phaser.Physics.ARCADE);
+    game.physics.enable( bullet, Phaser.Physics.ARCADE );
     bullet.outofBoundsKill = true;
     bullet.anchor.setTo(0.5, 0.5);
     bullet.body.velocity.y = 0;
@@ -194,12 +199,18 @@ function pew() {
 }
 
 // When Player & Boss collide -= heroHP
-function bossHit(player, boss) {
+function bossHit ( player, boss ) {
   heroHP -= 1;
   heroHPStatus.text = "LIFE: " + heroHP;
+
   console.log("Ouch! Life: -1");
+
   if (heroHP <= 0) {
     player.kill();
+    player = game.add.sprite( 200, game.world.height / 2, 'dead_hero' );
+    game.physics.arcade.enable( player );
+    game.physics.arcade.collide( player, boss );
+
     alert("Game Over! x.x");
   }
 }
@@ -207,10 +218,14 @@ function bossHit(player, boss) {
 // When Player's bullet hits boss -= bossHP
   // ! ISSUE: WHY DOES MORE THAN ONE BULLET FIRE?!
 function directHit() {
-  bossHP -= 0.5;
+  bullets.forEach( function ( bullet ) {
+    bullet.kill();
+  } );
+
+  bossHP -= 1;
   bossHPStatus.text = "LIFE: " + bossHP;
-  // bullets.kill();
   console.log("Direct hit!");
+
   console.log(bossHP);
   if (bossHP <= 0) {
     boss.kill();
