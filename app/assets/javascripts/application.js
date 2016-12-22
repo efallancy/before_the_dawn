@@ -21,7 +21,6 @@
 //= require phaser.min.js
 //= require phaser-plugin-isometric.min.js
 //= require scroll
-// require stars
 //= require modal
 //= require sweetalert.min.js
 //= require ghost

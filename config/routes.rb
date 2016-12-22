@@ -6,7 +6,7 @@ Rails.application.routes.draw do
 
   get 'pages/ghost'
 
-  get 'pages/about'
+  get 'pages/end'
 
   get 'pages/leap'
 

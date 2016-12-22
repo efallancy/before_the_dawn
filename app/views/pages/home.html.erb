@@ -1,19 +1,88 @@
 <section class="panel s1">
 	<div id="title">
-		<p>Before the Dawn</p>
+		<h2>BEFORE THE DAWN</h2>
 	</div>
 </section>
-<section class="panel s2">
-	<b>TWO</b>
+
+<!-- <section class="panel s2">
+	<div id="title2">
+		<h3>It's always the darkest before the dawn</h3>
+	</div>
 </section>
+
 <section class="panel s3">
-	<b>THREE</b>
-</section>
-<section class="panel s4">
-	<b>FOUR</b>
-	<div class="startGame">
-		<div id="button">
-		  <%= link_to( "Begin", pages_leap_path() ) %>
+	<div class=sectionThree>
+
+	<div id="title3">
+		<h3>Sometime in Life, we will...</h3>
+	</div>
+
+	<div class="allGames">
+
+		<div class="col col-3">
+			<p>Take a Leap Of Faith</p>
+			<div class="gameImage">
+					<img src="<%= image_path( "leap.gif" ) %>" id="leapSneakPeak" alt="Leap of Faith Game">
+			</div>
 		</div>
+
+		<div class="col col-3">
+			<p>Search for your past</p>
+			<div class="gameImage">
+					<img src="<%= image_path( "ghost.gif" ) %>" id="ghostSneakPeak" alt="Leap of Faith Game">
+			</div>
+		</div>
+
+		<div class="col col-3">
+			<p>Make a Choice</p>
+			<div class="gameImage">
+					<img src="<%= image_path( "boss.gif" ) %>" id="bossSneakPeak" alt="Leap of Faith Game">
+			</div>
+		</div>
+
+	</div>
+
+	</div>
+</section> -->
+
+
+<section class="panel s4">
+	<div class="wholePage">
+	<div class="startGame">
+		<p id="play">Play Game now!</p>
+		<div id="button">
+		  <%= link_to( image_tag(image_path('play_button.png')), pages_leap_path() ) %>
+		</div>
+
+		<div class="allGames">
+
+			<div class="col col-3">
+				<p>Level 1</p>
+				<p>Leap of Faith</p>
+				<div class="gameImage">
+						<img src="<%= image_path( "leap.gif" ) %>" id="leapSneakPeak" alt="Leap of Faith Game">
+				</div>
+			</div>
+
+			<div class="col col-3">
+				<p>Level 2</p>
+				<p>Blast from the past </p>
+				<div class="gameImage">
+						<img src="<%= image_path( "ghost.gif" ) %>" id="ghostSneakPeak" alt="Leap of Faith Game">
+				</div>
+			</div>
+
+			<div class="col col-3">
+				<p>Level 3</p>
+				<p>Beat the Boss!</p>
+				<div class="gameImage">
+						<img src="<%= image_path( "boss.gif" ) %>" id="bossSneakPeak" alt="Leap of Faith Game">
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
 	</div>
 </section>

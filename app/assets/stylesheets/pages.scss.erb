@@ -3,7 +3,17 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 // Homepage stuff here
+* {
+  margin: 0px;
+  padding: 0px;
 
+	//
+  // -webkit-box-sizing: border-box;
+  // -moz-box-sizing: border-box;
+  // -ms-box-sizing: border-box;
+  // -o-box-sizing: border-box;
+  box-sizing: border-box;
+}
 
 header{
 	margin: 3px solid white;
@@ -14,72 +24,159 @@ header{
 
 #title{
 		margin: 0px auto;
+		padding-top: 200px;
     // margin-top: px;
     text-align: center;
     line-height: 40vh;
     font-size: 50px;
+		color:white;
 }
+
+#title2{
+	color:white;
+	display: block;
+	text-align: center;
+	font-size: 30px;
+	margin: 40px auto;
+}
+
 
 .panel {
 		height: 100vh;
 		width: 100vw;
 	}
+
+	.panel.s2 {
+		margin-bottom: 400px
+	}
+
 	.panel.s3 {
 		margin-bottom: 400px
 	}
 
 	.s1{
-		color: white;
-		background-color: #000;
+		color: black;
+		// background-color: #000;
+		background-image: url(<%= image_path( "stars_bg.gif" ) %>);
+		background-size: cover;
+		background-repeat: repeat;
 	}
 
 	.s2{
-		background-color: #000;
+		background-color: #222222;
+
 	}
 
 	.s3{
 		background-color: #171914;
 	}
 
+	.sectionThree{
+		color:white;
+	}
+
+	#title3{
+		display: block;
+		margin: 0 auto;
+		height: 25vh;
+		border: 1px solid white;
+		text-align: center;
+		padding-top: 15vh;
+		font-size: 30px;
+	}
+
+	.allGames{
+		// border: 1px solid green;
+		margin-top: 20px;
+	}
+	.col{
+		display: block;
+		float: left;
+		padding: 0px;
+	}
+
+
+	.col-3{
+		display: inline-block;
+		width: calc(100%/3);
+		text-align: center;
+	}
+
+	.col-3 p{
+		font-size: 20px;
+	}
+
+	.gameImage{
+		border-radius: 3px;
+		// border: 1px solid white;
+	}
+
+	.gameImage:hover{
+		transform: scale(2, 2);
+	}
+
+	#leapSneakPeak, #ghostSneakPeak, #bossSneakPeak{
+		margin: 25px auto;
+		width: 90%;
+		height: 100%;
+		border: 8px solid white;
+	}
+
+
 	.s4{
-		background-image: url( <%= image_path( "dawn.jpg" ) %> );
+		background-image: url(<%= image_path( "bg2.gif" ) %>);
 		background-size: cover;
+		// background-image: url( <%= image_path( "dawn.jpg" ) %> );
+		// background-size: cover;
+	}
+
+	.wholePage{
+		background-image: url(<%= image_path( "bg2.gif" ) %>);
+		background-size: cover;
+		height: 100vh;
+		color: white;
 	}
 
 	.s4 .startGame {
-		height: 40px;
-		weight: 80px;
-		margin: 300px auto;
-		display: block;
+		height: 600px;
+		width: 800px;
+		display: inline-block;
+		background: rgba(255,255,255, 0.3);
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		margin-left: -400px;
+		margin-top: -300px;
+
+	}
+
+	#play{
 		text-align: center;
+		margin-top: 160px;
+		font-size: 30px;
 
 	}
 
 	#button{
-		height: 20px;
-		width: 50px;
+		height: 70px;
+		width: 70px;
 		display: inline-block;
-		border: 2px solid white;
-		color: white;
+
+		// color: white;
 	}
 
-	a {
-		text-decoration: none;
-		color: white;
+	#button img{
+		height: 100px;
+		width: 100px;
+		margin-top: 10px;
+		margin-left: 350px;
 	}
 
-	a:hover{
-		color: black;
-	}
 
-	#button:hover{
-		color: black;
-		background-color: white;
-		border: 2px solid black;
-	}
 
 	.wrapPage{
-		background-color: black;
+		background-image: url(<%= image_path( "bg2.gif" ) %>);
+		background-size: cover;
 		height: 100vh;
 		color: white;
 	}
@@ -87,7 +184,6 @@ header{
 	.gameContainer{
 		height: 600px;
 		width: 800px;
-		border: 1px solid red;
 		display: inline-block;
 		background: black;
 		position: absolute;
@@ -95,4 +191,22 @@ header{
 		left: 50%;
 		margin-left: -400px;
 		margin-top: -300px;
+	}
+
+  .endContainer{
+		height: 600px;
+		width: 800px;
+		display: inline-block;
+		background: rgba(255,255,255,0.3);
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		margin-left: -400px;
+		margin-top: -300px;
+  }
+
+	.wrapEndPage{
+		background: url(<%= image_path( "sunrise.gif" ) %>);
+		background-size: cover;
+		height: 100vh;
 	}
