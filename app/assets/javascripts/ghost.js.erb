@@ -15,10 +15,10 @@ $( document ).ready( function () {
   var hasCreatedOwnGhost = false;
 
   function preload () {
-    ghost.load.image( 'ghostly', '<%= asset_path( "assets/clown.png" ) %>' );
-    ghost.load.image( 'tile', '<%= asset_path( "assets/stone_n.png" ) %>' );
-    ghost.load.image('sky', '<%= asset_path( "assets/sky-fa.png") %>' );
-    ghost.load.spritesheet( 'hero', '<%= asset_path("assets/hero.png") %>', 45, 48);
+    ghost.load.image( 'ghostly', '<%= image_path( "clown.png" ) %>' );
+    ghost.load.image( 'tile', '<%= image_path( "stone_n.png" ) %>' );
+    ghost.load.image('sky', '<%= image_path( "sky-fa.png") %>' );
+    ghost.load.spritesheet( 'hero', '<%= image__path("hero.png") %>', 45, 48);
 
     ghost.time.advancedTiming = true;
 

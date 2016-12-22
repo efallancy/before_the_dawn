@@ -5,12 +5,12 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'leap', { preload: preload, cr
 
 function preload() {
 
-  game.load.image('sky', '<%= asset_path( "assets/sky-fa.png") %>' );
-  game.load.image('ground', '<%= asset_path ("assets/platform.png") %>' );
-  game.load.image('star', '<%= asset_path("assets/star.png") %>');
-  game.load.spritesheet('hero', '<%= asset_path("assets/hero.png") %>', 45, 48);
-  // game.load.spritesheet('enemy', 'assets/baddie.png', 32, 48);
-  game.load.image('barrier', '<%= asset_path("assets/diamond.png") %>');
+  game.load.image('sky', '<%= image_path( "sky-fa.png") %>' );
+  game.load.image('ground', '<%= image_path ("platform.png") %>' );
+  game.load.image('star', '<%= image_path("star.png") %>');
+  game.load.spritesheet('hero', '<%= image_path("hero.png") %>', 45, 48);
+  // game.load.spritesheet('enemy', 'baddie.png', 32, 48);
+  game.load.image('barrier', '<%= image_path("diamond.png") %>');
 
   game.world.setBounds(0, 0, 800, 1800);
 
