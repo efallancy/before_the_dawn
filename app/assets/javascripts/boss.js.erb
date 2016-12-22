@@ -1,409 +1,410 @@
 $( document ).ready( function () {
   if ( $( "#boss" ).length ) {
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'boss', { preload: preload, create: create, update: update });
+  var game = new Phaser.Game(800, 600, Phaser.AUTO, 'boss', { preload: preload, create: create, update: update });
 
-function preload() {
+  var player;
+  var platforms;
+  var ground;
+  var cursors;
+  var weapon;
+  var bullets;
+  var pewRate = 500;
+  var nextPew = 0;
+  var boss;
+  var heroHP = 100;
+  var bossHP = 100;
+  var shootButton;
+  var facing = "right";
+  var weapon = "bullet_2";
+  var ledges;
 
-  game.load.image('background', '<%= image_path( "sky-bnw.png" ) %>');
-  game.load.image('ground', '<%= image_path( "platform.png" ) %>');
-  game.load.image( 'heart_modal', '<%= image_path( "heart-200.png" ) %>' );
-  game.load.image('bullet_1', '<%= image_path( "heart.png" ) %>');
-  game.load.image( 'gun_modal', '<%= image_path( "space-gun.png" ) %>' );
-  game.load.image('bullet_2', '<%= image_path( "laser-pew.png" ) %>');
-  game.load.image( 'dead_hero', '<%= image_path( "dead-hero.png" ) %>' );
-  game.load.image( 'long_ledge', '<%= image_path( "ledge-2.png" ) %>' );
-  game.load.image( 'short_ledge', '<%= image_path( "ledge.png" ) %>' );
+  function preload() {
+    game.load.image('background', '<%= image_path( "sky-bnw.png" ) %>');
+    game.load.image('ground', '<%= image_path( "platform.png" ) %>');
+    game.load.image( 'heart_modal', '<%= image_path( "heart-200.png" ) %>' );
+    game.load.image('bullet_1', '<%= image_path( "heart.png" ) %>');
+    game.load.image( 'gun_modal', '<%= image_path( "space-gun.png" ) %>' );
+    game.load.image('bullet_2', '<%= image_path( "laser-pew.png" ) %>');
+    game.load.image( 'dead_hero', '<%= image_path( "dead-hero.png" ) %>' );
+    game.load.image( 'long_ledge', '<%= image_path( "ledge-2.png" ) %>' );
+    game.load.image( 'short_ledge', '<%= image_path( "ledge.png" ) %>' );
 
-  game.load.spritesheet('hero', '<%= image_path( "hero.png" ) %>', 45, 48);
-  game.load.spritesheet('boss', '<%= image_path( "boss-fa.png" ) %>', 80, 80);
+    game.load.spritesheet('hero', '<%= image_path( "hero.png" ) %>', 45, 48);
+    game.load.spritesheet('boss', '<%= image_path( "boss-fa.png" ) %>', 80, 80);
 
-  game.load.image( 'play_button', '<%= image_path( "play_button.png" ) %>' );
+    game.load.image( 'play_button', '<%= image_path( "play_button.png" ) %>' );
 
-  game.world.setBounds(0, 0, 800, 600);
-
-
-}
-
-var player;
-var platforms;
-var ground;
-var cursors;
-var weapon;
-var bullets;
-var pewRate = 500;
-var nextPew = 0;
-var boss;
-var heroHP = 100;
-var bossHP = 100;
-var shootButton;
-var facing = "right";
-var weapon = "bullet_2";
-var ledges;
-
-function create() {
-
-  game.physics.startSystem(Phaser.Physics.ARCADE);
-
-
-  // TEMPORARY 2D BACKGROUND
-  game.add.sprite(0, 0, 'background');
-  var modal = new gameModal( game );
-  modal.createModal({
-            type:"modalWeapon",
-            includeBackground: true,
-            backgroundColor: "0xFFFFFF",
-            modalCloseOnInput: true,
-            itemsArr: [
-              					{
-                          type: "text",
-                              content: "Choose your weapon!",
-                              fontFamily: "Courier New",
-                              fontSize: 42,
-                              color: "0xfb387c",
-                              offsetY: -80
-                        },
-                        {
-                              type: "image",
-                              content: "heart_modal",
-                              offsetY: 20,
-                              offsetX: 80,
-                              contentScale: 0.5,
-                              callback: function(){
-                                 weapon = "bullet_1";
-                                 console.log( weapon );
-                                 modal.hideModal( "modalWeapon" );
-                              }
-                        },
-                        {
-                              type: "image",
-                              content: "gun_modal",
-                              offsetY: 20,
-                              offsetX: -80,
-                              contentScale: 0.5,
-                              callback: function () {
-                                  weapon = "bullet_2";
-                                  console.log( weapon );
-                                  modal.hideModal( "modalWeapon" );
-                              }
-                        }
-                      ]
-   });
-   modal.showModal("modalWeapon");
-
-  // TEMPORARY 2D GROUND
-  platforms = game.add.group();
-  platforms.enableBody = true;
-  ground = platforms.create(0, game.world.height - 64, 'ground');
-  ground.scale.setTo(2, 2);
-  ground.body.immovable = true;
-
-  ledges = game.add.group();
-  ledges.enableBody = true;
-  createLedges();
-
-  // HERO
-  player = game.add.sprite(250, game.world.height = 0, 'hero');
-
-  // enable physics on our hero
-  game.physics.arcade.enable(player);
-
-  // player physics properties
-  player.body.bounce.y = 0;
-  player.body.gravity.y = 150;
-  player.body.collideWorldsBounds = true;
-
-  //  Our two animations, walking left and right.
-  player.animations.add('right', [0, 1, 2, 3], 10, true);
-  player.animations.add('left', [5, 6, 7, 8], 10, true);
-
-  // stop our player getting lost
-  player.body.collideWorldBounds = true;
-
-  // BOSS BITCH
-  boss = game.add.sprite(450, game.world.height = 0, 'boss');
-
-  game.physics.arcade.enable(boss);
-
-  boss.body.bounce.y = 0.2;
-  boss.body.gravity.y = 120;
-  boss.body.collideWorldsBounds = true;
-
-  boss.animations.add('right' [0, 1], 10, true);
-  boss.animations.add('left', [3, 4], 10, true);
-
-  boss.body.collideWorldBounds = true;
-
-  // PEW PEW MOTHERFUCKER
-  bullets = game.add.group();
-  bullets.enableBody = true;
-  bullets.physicsBodyType = Phaser.Physics.ARCADE;
-
-  // bullets.createMultiple(1, 'bullet_1');
-  bullets.setAll('checkWorldBounds', true);
-  bullets.setAll('outofBoundsKill', true);
-
-
-  // CONTROLS
-  cursors = game.input.keyboard.createCursorKeys();
-  shootButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-  // LIFE POINTS
-  heroHPStatus = game.add.text(30, 16, 'LIFE: 100', {fontSize: '32px', fill: '#FFF'});
-  heroHPStatus.fixedToCamera = true;
-  heroHPStatus.cameraOffset.setTo(30, 16);
-
-  bossHPStatus = game.add.text(640, 16, 'LIFE: ??', {fontSize: '32px', fill: '#FFF'});
-  bossHPStatus.fixedToCamera = true;
-  bossHPStatus.cameraOffset.setTo(640, 16);
-}
-
-function update() {
-
-  // collide player & boss with ground
-  game.physics.arcade.collide( player, ground );
-  game.physics.arcade.collide( boss, ground );
-  game.physics.arcade.collide( player, ledges );
-  game.physics.arcade.collide( boss, ledges );
-
-  // PLAYER MOVEMENT
-  player.body.velocity.x = 0;
-
-  if (cursors.left.isDown) {
-
-    // Move to the left
-    player.body.velocity.x = -150;
-    player.animations.play('left');
-    facing = 'left';
-  }
-  else if (cursors.right.isDown) {
-
-    // Move to the right
-    player.body.velocity.x = 150;
-    player.animations.play('right');
-    facing = 'right';
-  } else if (cursors.up.isDown) {
-
-    // Move to the right
-    facing = 'up';
-  }
-  else {
-    // Stand Still
-    player.animations.stop();
-    player.frame = 4;
+    game.world.setBounds(0, 0, 800, 600);
   }
 
-  // Player Jump
-  if ( cursors.up.isDown && player.body.touching.down ) {
-    player.body.velocity.y = -200;
-    facing = "up";
-  }
 
-  if ( shootButton.isDown ) {
-    pew();
 
-    // make boss chase player
-    game.physics.arcade.moveToObject( boss, player, 3000, 2000 ) ;
+  function create() {
 
-    if ( boss.body.velocity.x > 0 ) {
-      boss.animations.play('left');
-    } else {
-      boss.animations.play('right');
-    }
+    game.physics.startSystem(Phaser.Physics.ARCADE);
 
-  }
 
-  // Boss collides with character -hp
-  game.physics.arcade.collide( player, boss, bossHit, null, this );
-
-  // Character shoots boss -hp
-  game.physics.arcade.collide( bullets, boss, directHit, null, this );
-
-}
-
-// Shooting function, obviously
-function pew () {
-  if ( game.time.now > nextPew && bossHP > 0 ) {
-    nextPew = game.time.now + pewRate;
-
-    var bullet;
-    if ( facing === "right" ) {
-      bullet = bullets.create(player.body.x + player.body.width / 2 + 20, player.body.y + player.body.height / 2 - 4, weapon );
-    } else if ( facing === "left" ) {
-      bullet = bullets.create(player.body.x + player.body.width / 2 - 20, player.body.y + player.body.height / 2 - 4, weapon );
-    } else if ( facing === "up" ) {
-      bullet = bullets.create(player.body.x + player.body.width / 2 + 20, player.body.y + player.body.height / 2 - 4, weapon );
-    }
-
-    game.physics.enable( bullet, Phaser.Physics.ARCADE );
-
-    bullet.outofBoundsKill = true;
-    bullet.anchor.setTo(0.5, 0.5);
-    bullet.body.velocity.y = 0;
-
-    if (facing === "right") {
-      bullet.body.velocity.x = 400;
-    } else if ( facing === "left" ){
-      bullet.body.velocity.x = -400;
-    } else if ( facing === "up" ){
-      bullet.body.velocity.y = -400;
-    }
-
-  }
-}
-
-// When Player & Boss collide -= heroHP
-function bossHit ( player, boss ) {
-  heroHP -= 1;
-  heroHPStatus.text = "LIFE: " + heroHP;
-
-  if (heroHP <= 0) {
-    player.kill();
-    player = game.add.sprite( 200, game.world.height / 2, 'dead_hero' );
-    game.physics.arcade.enable( player );
-    game.physics.arcade.collide( player, boss );
-
-    // sweet alert: lose
-    
-    // pop up - retry message:
-    var modalReplayBoss = new gameModal( game );
-    modalReplayBoss.createModal({
-              type:"modalBossReplay",
+    // TEMPORARY 2D BACKGROUND
+    game.add.sprite(0, 0, 'background');
+    var modal = new gameModal( game );
+    modal.createModal({
+              type:"modalWeapon",
               includeBackground: true,
               backgroundColor: "0xFFFFFF",
               modalCloseOnInput: true,
               itemsArr: [
-                          {
+                					{
                             type: "text",
-                            content: "Oops x.x",
-                            fontFamily: "Courier New",
-                            fontSize: 42,
-                            color: "0xfb387c",
-                            offsetY: -140
+                                content: "Choose your weapon!",
+                                fontFamily: "Courier New",
+                                fontSize: 42,
+                                color: "0xfb387c",
+                                offsetY: -80
                           },
                           {
-                            type: "text",
-                            content: "Don't give up! Try again.",
-                            fontFamily: "Courier New",
-                            fontSize: 18,
-                            color: "0xfb387c",
-                            offsetY: -80
+                                type: "image",
+                                content: "heart_modal",
+                                offsetY: 20,
+                                offsetX: 80,
+                                contentScale: 0.5,
+                                callback: function(){
+                                   weapon = "bullet_1";
+                                   console.log( weapon );
+                                   modal.hideModal( "modalWeapon" );
+                                }
                           },
                           {
-                            type: "image",
-                            content: "play_button",
-                            offsetY: -20,
-                            offsetX: 0,
-                            contentScale: 0.5,
-                            callback: function(){
-                               window.location.href = "/pages/boss";
-                            }
+                                type: "image",
+                                content: "gun_modal",
+                                offsetY: 20,
+                                offsetX: -80,
+                                contentScale: 0.5,
+                                callback: function () {
+                                    weapon = "bullet_2";
+                                    console.log( weapon );
+                                    modal.hideModal( "modalWeapon" );
+                                }
                           }
                         ]
      });
-     modalReplayBoss.showModal("modalBossReplay");
+     modal.showModal("modalWeapon");
 
-    player = game.add.sprite( 200, game.world.height / 2, 'dead_hero' );
-    game.physics.arcade.enable( player );
-    game.physics.arcade.collide( player, boss );
+    // TEMPORARY 2D GROUND
+    platforms = game.add.group();
+    platforms.enableBody = true;
+    ground = platforms.create(0, game.world.height - 64, 'ground');
+    ground.scale.setTo(2, 2);
+    ground.body.immovable = true;
+
+    ledges = game.add.group();
+    ledges.enableBody = true;
+    createLedges();
+
+    // HERO
+    player = game.add.sprite(250, game.world.height = 0, 'hero');
+
+    // enable physics on our hero
+    game.physics.arcade.enable(player);
+
+    // player physics properties
+    player.body.bounce.y = 0;
+    player.body.gravity.y = 150;
+    player.body.collideWorldsBounds = true;
+
+    //  Our two animations, walking left and right.
+    player.animations.add('right', [0, 1, 2, 3], 10, true);
+    player.animations.add('left', [5, 6, 7, 8], 10, true);
+
+    // stop our player getting lost
+    player.body.collideWorldBounds = true;
+
+    // BOSS BITCH
+    boss = game.add.sprite(450, game.world.height = 0, 'boss');
+
+    game.physics.arcade.enable(boss);
+
+    boss.body.bounce.y = 0.2;
+    boss.body.gravity.y = 120;
+    boss.body.collideWorldsBounds = true;
+
+    boss.animations.add('right' [0, 1], 10, true);
+    boss.animations.add('left', [3, 4], 10, true);
+
+    boss.body.collideWorldBounds = true;
+
+    // PEW PEW MOTHERFUCKER
+    bullets = game.add.group();
+    bullets.enableBody = true;
+    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+    // bullets.createMultiple(1, 'bullet_1');
+    bullets.setAll('checkWorldBounds', true);
+    bullets.setAll('outofBoundsKill', true);
+
+
+    // CONTROLS
+    cursors = game.input.keyboard.createCursorKeys();
+    shootButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+    // LIFE POINTS
+    heroHPStatus = game.add.text(30, 16, 'LIFE: 100', {fontSize: '32px', fill: '#FFF'});
+    heroHPStatus.fixedToCamera = true;
+    heroHPStatus.cameraOffset.setTo(30, 16);
+
+    bossHPStatus = game.add.text(640, 16, 'LIFE: ??', {fontSize: '32px', fill: '#FFF'});
+    bossHPStatus.fixedToCamera = true;
+    bossHPStatus.cameraOffset.setTo(640, 16);
+  }
+
+  function update() {
+
+    // collide player & boss with ground
+    game.physics.arcade.collide( player, ground );
+    game.physics.arcade.collide( boss, ground );
+    game.physics.arcade.collide( player, ledges );
+    game.physics.arcade.collide( boss, ledges );
+
+    // PLAYER MOVEMENT
+    player.body.velocity.x = 0;
+
+    if (cursors.left.isDown) {
+
+      // Move to the left
+      player.body.velocity.x = -150;
+      player.animations.play('left');
+      facing = 'left';
+    }
+    else if (cursors.right.isDown) {
+
+      // Move to the right
+      player.body.velocity.x = 150;
+      player.animations.play('right');
+      facing = 'right';
+    } else if (cursors.up.isDown) {
+
+      // Move to the right
+      facing = 'up';
+    }
+    else {
+      // Stand Still
+      player.animations.stop();
+      player.frame = 4;
+    }
+
+    // Player Jump
+    if ( cursors.up.isDown && player.body.touching.down ) {
+      player.body.velocity.y = -200;
+      facing = "up";
+    }
+
+    if ( shootButton.isDown ) {
+      pew();
+
+      // make boss chase player
+      game.physics.arcade.moveToObject( boss, player, 3000, 2000 ) ;
+
+      if ( boss.body.velocity.x > 0 ) {
+        boss.animations.play('left');
+      } else {
+        boss.animations.play('right');
+      }
+
+    }
+
+    // Boss collides with character -hp
+    game.physics.arcade.collide( player, boss, bossHit, null, this );
+
+    // Character shoots boss -hp
+    game.physics.arcade.collide( bullets, boss, directHit, null, this );
 
   }
-}
 
-// When Player's bullet hits boss -= bossHP
-function directHit() {
-  bullets.forEach( function ( bullet ) {
-    bullet.kill();
-  } );
+  // Shooting function, obviously
+  function pew () {
+    if ( game.time.now > nextPew && bossHP > 0 ) {
+      nextPew = game.time.now + pewRate;
 
-  bossHP -= 5;
-  bossHPStatus.text = "LIFE: " + bossHP;
+      var bullet;
+      if ( facing === "right" ) {
+        bullet = bullets.create(player.body.x + player.body.width / 2 + 20, player.body.y + player.body.height / 2 - 4, weapon );
+      } else if ( facing === "left" ) {
+        bullet = bullets.create(player.body.x + player.body.width / 2 - 20, player.body.y + player.body.height / 2 - 4, weapon );
+      } else if ( facing === "up" ) {
+        bullet = bullets.create(player.body.x + player.body.width / 2 + 20, player.body.y + player.body.height / 2 - 4, weapon );
+      }
 
-  if (bossHP <= 0) {
-    boss.kill();
+      game.physics.enable( bullet, Phaser.Physics.ARCADE );
 
+      bullet.outofBoundsKill = true;
+      bullet.anchor.setTo(0.5, 0.5);
+      bullet.body.velocity.y = 0;
 
-    if ( weapon === "bullet_1" ) {
+      if (facing === "right") {
+        bullet.body.velocity.x = 400;
+      } else if ( facing === "left" ){
+        bullet.body.velocity.x = -400;
+      } else if ( facing === "up" ){
+        bullet.body.velocity.y = -400;
+      }
 
-      // IF BOSS KILLED && WEAPON = HEART, POP UP MESSAGE: WINNER
-      var modalBossWIN = new gameModal( game );
-      modalBossWIN.createModal({
-                type:"modalWinner",
+    }
+  }
+
+  // When Player & Boss collide -= heroHP
+  function bossHit ( player, boss ) {
+    heroHP -= 1;
+    heroHPStatus.text = "LIFE: " + heroHP;
+
+    if (heroHP <= 0) {
+      player.kill();
+      player = game.add.sprite( 200, game.world.height / 2, 'dead_hero' );
+      game.physics.arcade.enable( player );
+      game.physics.arcade.collide( player, boss );
+
+      // sweet alert: lose
+
+      // pop up - retry message:
+      var modalReplayBoss = new gameModal( game );
+      modalReplayBoss.createModal({
+                type:"modalBossReplay",
                 includeBackground: true,
                 backgroundColor: "0xFFFFFF",
                 modalCloseOnInput: true,
                 itemsArr: [
                             {
                               type: "text",
-                                  content: "Killed it with kindness!",
-                                  fontFamily: "Courier New",
-                                  fontSize: 42,
-                                  color: "0xfb387c",
-                                  offsetY: -140
+                              content: "Oops x.x",
+                              fontFamily: "Courier New",
+                              fontSize: 42,
+                              color: "0xfb387c",
+                              offsetY: -140
                             },
                             {
                               type: "text",
-                                content: "Congratulations! \nWhat adventure will you go on next?",
-                                fontFamily: "Courier New",
-                                fontSize: 18,
-                                color: "0xfb387c",
-                                offsetY: -40
+                              content: "Don't give up! Try again.",
+                              fontFamily: "Courier New",
+                              fontSize: 18,
+                              color: "0xfb387c",
+                              offsetY: -80
+                            },
+                            {
+                              type: "image",
+                              content: "play_button",
+                              offsetY: -20,
+                              offsetX: 0,
+                              contentScale: 0.5,
+                              callback: function(){
+                                 window.location.href = "/pages/boss";
+                              }
                             }
                           ]
        });
-       modalBossWIN.showModal("modalWinner");
+       modalReplayBoss.showModal("modalBossReplay");
 
-    } else {
-      // IF BOSS KILLED && WEAPON = LASER, POP UP MESSAGE: LOSE
+      player = game.add.sprite( 200, game.world.height / 2, 'dead_hero' );
+      game.physics.arcade.enable( player );
+      game.physics.arcade.collide( player, boss );
 
-      var modalBossKO = new gameModal( game );
-      modalBossKO.createModal({
-        type: "modalBoo",
-        includeBackground: true,
-        backgroundColor: "0xFFFFFF",
-        modalCloseOnInput: true,
-        itemsArr: [
-                    {
-                      type: "text",
-                      content: "You lose!",
-                      fontFamily: "Courier New",
-                      fontSize: 42,
-                      color: "0xfb387c",
-                      offsetY: -140
-                    },
-                    {
-                      type: "text",
-                      content: "You lose as you fight with violence. \nTry spreading some love instead!",
-                      fontFamily: "Courier New",
-                      fontsize: 18,
-                      color: "0xfb387c",
-                      offsetY: -40
-                    },
-                    {
-                      type: "image",
-                      content: "play_button",
-                      offsetY: 80,
-                      offsetX: 0,
-                      contentScale: 0.5,
-                      callback: function() {
-                        window.location.href = "/pages/boss"
-                      }
-                    }
-        ]
-      });
-      modalBossKO.showModal("modalBoo");
     }
-}
+  }
 
-var createLedges = function () {
-  ledges.create( 100, 410, 'short_ledge' );
-  ledges.create( 550, 410, 'short_ledge' );
+// When Player's bullet hits boss -= bossHP
+  function directHit() {
+    bullets.forEach( function ( bullet ) {
+      bullet.kill();
+    } );
 
-  ledges.forEach( function ( ledge ) {
-    ledge.body.immovable = true;
-  })
-};
+    bossHP -= 5;
+    bossHPStatus.text = "LIFE: " + bossHP;
 
-}
-}
+    if (bossHP <= 0) {
+      boss.kill();
+
+
+      if ( weapon === "bullet_1" ) {
+
+        // IF BOSS KILLED && WEAPON = HEART, POP UP MESSAGE: WINNER
+        var modalBossWIN = new gameModal( game );
+        modalBossWIN.createModal({
+                  type:"modalWinner",
+                  includeBackground: true,
+                  backgroundColor: "0xFFFFFF",
+                  modalCloseOnInput: true,
+                  itemsArr: [
+                              {
+                                type: "text",
+                                    content: "Killed it with kindness!",
+                                    fontFamily: "Courier New",
+                                    fontSize: 42,
+                                    color: "0xfb387c",
+                                    offsetY: -140
+                              },
+                              {
+                                type: "text",
+                                  content: "Congratulations! \nWhat adventure will you go on next?",
+                                  fontFamily: "Courier New",
+                                  fontSize: 18,
+                                  color: "0xfb387c",
+                                  offsetY: -40
+                              }
+                            ]
+         });
+         modalBossWIN.showModal("modalWinner");
+
+      } else {
+        // IF BOSS KILLED && WEAPON = LASER, POP UP MESSAGE: LOSE
+
+        var modalBossKO = new gameModal( game );
+        modalBossKO.createModal({
+          type: "modalBoo",
+          includeBackground: true,
+          backgroundColor: "0xFFFFFF",
+          modalCloseOnInput: true,
+          itemsArr: [
+                      {
+                        type: "text",
+                        content: "You lose!",
+                        fontFamily: "Courier New",
+                        fontSize: 42,
+                        color: "0xfb387c",
+                        offsetY: -140
+                      },
+                      {
+                        type: "text",
+                        content: "You lose as you fight with violence. \nTry spreading some love instead!",
+                        fontFamily: "Courier New",
+                        fontsize: 18,
+                        color: "0xfb387c",
+                        offsetY: -40
+                      },
+                      {
+                        type: "image",
+                        content: "play_button",
+                        offsetY: 80,
+                        offsetX: 0,
+                        contentScale: 0.5,
+                        callback: function() {
+                          window.location.href = "/pages/boss"
+                        }
+                      }
+          ]
+        });
+        modalBossKO.showModal("modalBoo");
+      }
+    }
+
+
+
+  }
+  var createLedges = function () {
+    ledges.create( 100, 410, 'short_ledge' );
+    ledges.create( 550, 410, 'short_ledge' );
+
+    ledges.forEach( function ( ledge ) {
+      ledge.body.immovable = true;
+    })
+  };
+
+  }  
 });
