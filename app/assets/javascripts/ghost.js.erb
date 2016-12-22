@@ -15,16 +15,10 @@ $( document ).ready( function () {
   var hasCreatedOwnGhost = false;
 
   function preload () {
-<<<<<<< HEAD
     ghost.load.image( 'ghostly', '<%= image_path( "ghost.png" ) %>' );
     ghost.load.image( 'tile', '<%= image_path( "stone_n.png" ) %>' );
     ghost.load.image('sky', '<%= image_path( "sky-fa.png") %>' );
     ghost.load.spritesheet( 'hero', '<%= image_path("hero.png") %>', 45, 48);
-=======
-    ghost.load.image('sky', '<%= image_path( "sky-fa.png" ) %>' );
-    ghost.load.image( 'ghostly', '<%= image_path( "ghost.png" ) %>', 45, 48 );
-    ghost.load.spritesheet( 'hero', '<%= image_path( "hero.png" ) %>', 45, 48);
->>>>>>> 703d235d3978e52b8713371984bf422353f87733
 
     ghost.time.advancedTiming = true;
 
@@ -54,7 +48,6 @@ $( document ).ready( function () {
     spawnGhosts();
 
     player = ghost.add.isoSprite( 250, 250, 1, 'hero', 4 );
-
     player.name = "player";
 
     player.anchor.set( 0.5 );
@@ -109,7 +102,6 @@ $( document ).ready( function () {
 
     // Just like Arcade Physics!
     ghost.physics.isoArcade.collide( ghosts, player, mirrorMyself );
-    ghost.physics.isoArcade.collide( ghosts, ghosts, null );
 
     // Ensure everything stays sorted as it moves about. We'll use advanced sorting here as we're dealing with z axis stuff.
     ghost.iso.topologicalSort( ghosts );
@@ -118,7 +110,7 @@ $( document ).ready( function () {
 
   function render () {
     ghost.debug.text("Knock over the clown to find your own ghost!", 2, 36, "#ff2222");
-    // ghost.debug.text(ghost.time.fps || '--', 2, 14, "#a7aebe");
+    ghost.debug.text(ghost.time.fps || '--', 2, 14, "#a7aebe");
 
     // Uncomment this to see the debug bodies.
     // isoGroup.forEach(function (currentCube) {
@@ -140,6 +132,9 @@ $( document ).ready( function () {
     // console.log( "Player:", player.name );
 
     if ( ghost.name !== player.name ) {
+      // ghosts.forEach( function ( g ) {
+      //   g.kill();
+      // } );
       ghost.kill();
       spawned++;
       if ( spawned === 10 ) {
@@ -162,37 +157,12 @@ $( document ).ready( function () {
           for (var yy = 256; yy > 0; yy -= 30) {
               // Create a ghostly using the new game.add.isoSprite factory method at the specified position.
               // The last parameter is the group you want to add it to (just like game.add.sprite)
-              ghostly = ghost.add.isoSprite( 50, 50, 400, 'ghostly', 0, ghosts );
+              ghostly = ghost.add.isoSprite(50, 50, 400, 'ghostly', 0, ghosts);
 
               if ( !hasCreatedOwnGhost ) {
                 hasCreatedOwnGhost = true;
                 ghostly.name = "player";
               }
-
-              ghostly.anchor.set( 0.5 );
-
-              // Enable the physics body on this ghostly.
-              ghost.physics.isoArcade.enable(ghostly);
-
-              // Collide with the world bounds so it doesn't go falling forever or fly off the screen!
-              ghostly.body.collideWorldBounds = true;
-
-              // Add a full bounce on the x and y axes, and a bit on the z axis.
-              ghostly.body.bounce.set( 1, 1, 0.2 );
-
-              // Send the ghostlys off in random x and y directions! Wheee!
-              ghostly.body.velocity.setTo( ghost.rnd.integerInRange( -100, 100 ), ghost.rnd.integerInRange( -100, 100 ), 0);
-          }
-      }
-  };
-
-  var spawnLittle = function () {
-      var ghostly;
-      for (var xx = 256; xx > 0; xx -= 100 ) {
-          for (var yy = 256; yy > 0; yy -= 100 ) {
-              // Create a ghostly using the new game.add.isoSprite factory method at the specified position.
-              // The last parameter is the group you want to add it to (just like game.add.sprite)
-              ghostly = ghost.add.isoSprite( 50, 50, 400, 'ghostly', 0, ghosts );
 
               ghostly.anchor.set(0.5);
 
@@ -203,10 +173,35 @@ $( document ).ready( function () {
               ghostly.body.collideWorldBounds = true;
 
               // Add a full bounce on the x and y axes, and a bit on the z axis.
-              ghostly.body.bounce.set( 1, 1, 0.2 );
+              ghostly.body.bounce.set(1, 1, 0.2);
 
               // Send the ghostlys off in random x and y directions! Wheee!
-              ghostly.body.velocity.setTo( ghost.rnd.integerInRange( -100, 100 ), ghost.rnd.integerInRange( -100, 100 ), 0 );
+              ghostly.body.velocity.setTo(ghost.rnd.integerInRange(-50, 50), ghost.rnd.integerInRange(-50, 50), 0);
+          }
+      }
+  };
+
+  var spawnLittle = function () {
+      var ghostly;
+      for (var xx = 256; xx > 0; xx -= 100 ) {
+          for (var yy = 256; yy > 0; yy -= 100 ) {
+              // Create a ghostly using the new game.add.isoSprite factory method at the specified position.
+              // The last parameter is the group you want to add it to (just like game.add.sprite)
+              ghostly = ghost.add.isoSprite(50, 50, 400, 'ghostly', 0, ghosts);
+
+              ghostly.anchor.set(0.5);
+
+              // Enable the physics body on this ghostly.
+              ghost.physics.isoArcade.enable(ghostly);
+
+              // Collide with the world bounds so it doesn't go falling forever or fly off the screen!
+              ghostly.body.collideWorldBounds = true;
+
+              // Add a full bounce on the x and y axes, and a bit on the z axis.
+              ghostly.body.bounce.set(1, 1, 0.2);
+
+              // Send the ghostlys off in random x and y directions! Wheee!
+              ghostly.body.velocity.setTo(ghost.rnd.integerInRange(-100, 100), ghost.rnd.integerInRange(-100, 100), 0);
           }
       }
   };
