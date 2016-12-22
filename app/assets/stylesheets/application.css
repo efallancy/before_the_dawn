@@ -17,7 +17,7 @@
 
 
  /*This is css for generating stars background*/
-.{
+* {
   box-sizing: border-box;
   margin: 0px;
   padding: 0px;
