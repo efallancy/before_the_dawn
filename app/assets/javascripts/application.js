@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require phaser.min.js
 //= require phaser-plugin-isometric.min.js
+//= require sweetalert.min.js
 //= require ghost
 //= require leap
 //= require maze

@@ -228,15 +228,39 @@ function hitEnemy (player, enemy) {
 
   if (life === 0) {
     player.kill();
-    alert('you lose :(');
+    // sweet alert - lose
+        swal({
+          title: "Uh oh",
+          text: "The first step is always the hardest. Don't give up!",
+          type: "error",
+          showCancelButton: false,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Try again!",
+          closeOnConfirm: false,
+        },
+        function(){
+            window.location.href = '/pages/leap';
+        });
   }
 
 }
 
 function checkWin () {
     console.log("checkWin is ran");
-    if (score >= 200) {
-    alert('You win!');
+    if (score >= 150 && player.body.touching.down) {
+      // sweet alert - win
+      swal({
+        title: "Woohoo!",
+        text: "Good job! The first step is always the hardest :)",
+        type: "success",
+        showCancelButton: false,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Bring on Level 2!",
+        closeOnConfirm: false,
+      },
+      function(){
+          window.location.href = '/pages/ghost';
+      });
     }
     else{
       console.log("you are loser forever!");

@@ -28,7 +28,7 @@ var pewRate = 500;
 var nextPew = 0;
 var boss;
 var heroHP = 3;
-var bossHP = 100;
+var bossHP = 10;
 var shootButton;
 var facing;
 //
@@ -200,7 +200,20 @@ function bossHit(player, boss) {
   console.log("Ouch! Life: -1");
   if (heroHP <= 0) {
     player.kill();
-    alert("Game Over! x.x");
+  // sweet alert: lose
+  swal({
+    title: "Oh no!",
+    text: "You lose :( Don't give up!",
+    type: "error",
+    showCancelButton: false,
+    confirmButtonColor: "#DD6B55",
+    confirmButtonText: "Try again",
+    closeOnConfirm: false,
+  },
+  function(){
+      window.location.href = '/pages/boss';
+  });
+
   }
 }
 
@@ -214,7 +227,20 @@ function directHit() {
   console.log(bossHP);
   if (bossHP <= 0) {
     boss.kill();
-    alert("Congratulations! Winner, winner chicken dinner!");
+
+    // sweet alert: win!
+    swal({
+      title: "KO! You win!!",
+      text: "Congratulations!",
+      type: "success",
+      showCancelButton: false,
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "Woohoo! I'm the best!",
+      closeOnConfirm: false,
+    },
+    function(){
+        window.location.href = '/';
+    });
   }
 
 }

@@ -15,7 +15,7 @@ $( document ).ready( function () {
   var hasCreatedOwnGhost = false;
 
   function preload () {
-    ghost.load.image( 'ghostly', '<%= image_path( "clown.png" ) %>' );
+    ghost.load.image( 'ghostly', '<%= image_path( "ghost.png" ) %>' );
     ghost.load.image( 'tile', '<%= image_path( "stone_n.png" ) %>' );
     ghost.load.image('sky', '<%= image_path( "sky-fa.png") %>' );
     ghost.load.spritesheet( 'hero', '<%= image_path("hero.png") %>', 45, 48);
@@ -145,6 +145,7 @@ $( document ).ready( function () {
     } else {
       ghosts.forEach( function ( g ) {
         g.kill();
+        winAnimation();
       } );
     }
 
@@ -203,6 +204,10 @@ $( document ).ready( function () {
               ghostly.body.velocity.setTo(ghost.rnd.integerInRange(-100, 100), ghost.rnd.integerInRange(-100, 100), 0);
           }
       }
+  };
+
+  var winAnimation = function() {
+
   };
 
   }
