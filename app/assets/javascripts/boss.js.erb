@@ -90,7 +90,7 @@ $( document ).ready( function () {
      });
      modal.showModal("modalWeapon");
 
-    // TEMPORARY 2D GROUND
+    // 2D GROUND
     platforms = game.add.group();
     platforms.enableBody = true;
     ground = platforms.create(0, game.world.height - 64, 'ground');
@@ -262,8 +262,6 @@ $( document ).ready( function () {
       game.physics.arcade.enable( player );
       game.physics.arcade.collide( player, boss );
 
-      // sweet alert: lose
-
       // pop up - retry message:
       var modalReplayBoss = new gameModal( game );
       modalReplayBoss.createModal({
@@ -393,8 +391,6 @@ $( document ).ready( function () {
         modalBossKO.showModal("modalBoo");
       }
     }
-
-
 
   }
   var createLedges = function () {

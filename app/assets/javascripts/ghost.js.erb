@@ -1,12 +1,4 @@
-// The arguments
-// 1. width
-// 2. height
-// 3. renderer ( Phaser.AUTO, Phaser.CANVAS, Phaser.WEBGL or Phaser.HEADLESS for no rendering at all )
-// 4. parent ( To specify which element that it will append to. Takes in the ID of the element )
-// 5. State of it during on create ( null, preload, create, update, render )
-// 6. Transparent ( referring to the background whether to have a transparent or not )
-// 7. Antialias ( Drawing of the image texture. Default is true unless if you're going to have pixel art, then go for false )
-// 8. physicsConfig ( Physics configuration object to pass to the Physics world upon creation )
+
 $( document ).ready( function () {
   if ( $( "#ghost" ).length ) {
     var ghost = new Phaser.Game( 800, 600, Phaser.AUTO, "ghost", { preload: preload, create: create, update: update, render: render }, true );
@@ -235,18 +227,17 @@ $( document ).ready( function () {
 
   var winAnimation = function() {
     player.loadTexture('ghostScene', 1);
-    // scene = ghost.add.isoSprite( 0, 50, 1, 'ghost-scene', 0);
+
     player.animations.add('ghost-freak', Phaser.Animation.generateFrameNames('ghosting', 1, 31), 10, true);
     player.body.x = 300;
     player.body.y = 300;
-    // player = ghost.add.isoSprite( 250, 250, 1, 'hero', 4 );
-    // scene.physics.arcade.enable( player );
+
     player.animations.play('ghost-freak');
     console.log("winAnimation ran");
     var modalWin = new gameModal( ghost );
     modalWin.createModal({
               type:"modalGhostWin",
-              includeBackground: true,
+              includeBackground: false,
               backgroundColor: "0xFFFFFF",
               modalCloseOnInput: true,
               itemsArr: [
