@@ -240,7 +240,7 @@ $( document ).ready( function () {
 
     player = ghost.add.isoSprite( 400, 300, 1, 'ghostScene', 31 );
     // player.loadTexture('ghostScene', 1);
-    player.animations.add('ghost-freak', Phaser.Animation.generateFrameNames('ghosting', 1, 31), 100, false);
+    player.animations.add('ghost-freak', Phaser.Animation.generateFrameNames('ghosting', 1, 31), 5, false);
     player.animations.play('ghost-freak');
     player.position.x = 400;
     player.position.y = 300;
