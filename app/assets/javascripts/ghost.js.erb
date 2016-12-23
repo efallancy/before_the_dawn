@@ -1,11 +1,12 @@
-
+var ghost;
 $( document ).ready( function () {
   if ( $( "#ghost" ).length ) {
-    var ghost = new Phaser.Game( 800, 600, Phaser.AUTO, "ghost", { preload: preload, create: create, update: update, render: render }, true );
+    ghost = new Phaser.Game( 800, 600, Phaser.AUTO, "ghost", { preload: preload, create: create, update: update, render: render }, true );
 
   var cursors, ghosts, tiles, spawned = 0;
   var hasCreatedOwnGhost = false;
   var scene;
+
 
   function preload () {
     ghost.load.image( 'ghostly', '<%= image_path( "ghost.png" ) %>' );
@@ -112,6 +113,8 @@ $( document ).ready( function () {
     // Move the player at this speed.
     var speed = 100;
 
+    if ( !player.body) { return false; }
+
     if ( cursors.up.isDown ) {
         player.body.velocity.y = -speed;
     }
@@ -162,7 +165,7 @@ $( document ).ready( function () {
     } else {
       ghosts.forEach( function ( g ) {
         g.kill();
-        player.kill();
+        // player.kill();
       } );
       winAnimation();
       // ghost.physics.arcade.collide( player, boss );
@@ -225,51 +228,59 @@ $( document ).ready( function () {
       }
   };
 
+  var updateFrame = function ( num ) {
+    window.setTimeout(function () {
+
+      player.frame = i;
+    }, num * 50);
+  };
+
   var winAnimation = function() {
-    player.loadTexture('ghostScene', 1);
+    player.kill();
 
-    player.animations.add('ghost-freak', Phaser.Animation.generateFrameNames('ghosting', 1, 31), 10, true);
-    player.body.x = 300;
-    player.body.y = 300;
-
+    player = ghost.add.isoSprite( 400, 300, 1, 'ghostScene', 31 );
+    // player.loadTexture('ghostScene', 1);
+    player.animations.add('ghost-freak', Phaser.Animation.generateFrameNames('ghosting', 1, 31), 100, false);
     player.animations.play('ghost-freak');
-    console.log("winAnimation ran");
-    var modalWin = new gameModal( ghost );
-    modalWin.createModal({
-              type:"modalGhostWin",
-              includeBackground: false,
-              backgroundColor: "0xFFFFFF",
-              modalCloseOnInput: true,
-              itemsArr: [
-                					{
-                            type: "text",
-                                content: "Woohoo!",
-                                fontFamily: "Courier New",
-                                fontSize: 42,
-                                color: "0x1bae8c",
-                                offsetY: -140
-                          },
-                          {
-                            type: "text",
-                              content: "Congratulations! \nYou sure put that ghost to bed \nwith plenty of good juju and karma to spare. \nDare you continue on to the next \nlevel like a baws?",
-                              fontFamily: "Courier New",
-                              fontSize: 18,
-                              color: "0x1bae8c",
-                              offsetY: -40
-                          },
-                          {
-                                type: "image",
-                                content: "play_button",
-                                offsetY: 80,
-                                offsetX: 0,
-                                contentScale: 0.5,
-                                callback: function(){
-                                   window.location.href = "/pages/boss";
-                                }
-                          }
-                        ]
-     });
-     modalWin.showModal("modalGhostWin");
+    player.position.x = 400;
+    player.position.y = 300;
+    //
+    // var modalWin = new gameModal( ghost );
+    // modalWin.createModal({
+    //           type:"modalGhostWin",
+    //           includeBackground: false,
+    //           backgroundColor: "0xFFFFFF",
+    //           modalCloseOnInput: true,
+    //           itemsArr: [
+    //             					{
+    //                         type: "text",
+    //                             content: "Woohoo!",
+    //                             fontFamily: "Courier New",
+    //                             fontSize: 42,
+    //                             color: "0x1bae8c",
+    //                             offsetY: -140
+    //                       },
+    //                       {
+    //                         type: "text",
+    //                           content: "Congratulations! \nYou sure put that ghost to bed \nwith plenty of good juju and karma to spare. \nDare you continue on to the next \nlevel like a baws?",
+    //                           fontFamily: "Courier New",
+    //                           fontSize: 18,
+    //                           color: "0x1bae8c",
+    //                           offsetY: -40
+    //                       },
+    //                       {
+    //                             type: "image",
+    //                             content: "play_button",
+    //                             offsetY: 80,
+    //                             offsetX: 0,
+    //                             contentScale: 0.5,
+    //                             callback: function(){
+    //                                window.location.href = "/pages/boss";
+    //                             }
+    //                       }
+    //                     ]
+    //  });
+    //  modalWin.showModal("modalGhostWin");
   };
 
   }

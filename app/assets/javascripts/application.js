@@ -22,7 +22,6 @@
 //= require phaser-plugin-isometric.min.js
 //= require scroll
 //= require modal
-//= require sweetalert.min.js
 //= require ghost
 //= require leap
 //= require boss
