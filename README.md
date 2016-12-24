@@ -21,6 +21,7 @@ Consists of 3 levels:
 * Phaser Modal
 
 ### Installation
+Either you download it directly or just run the command below in your terminal...
 <tt>git clone https://github.com/emmafallancy/before_the_dawn.git</tt>
 
 ### Future Releases
