@@ -24,7 +24,6 @@ $( document ).ready( function () {
       game.load.image('cliff', '<%= image_path ("space-cliff.png") %>' );
       game.load.image('star', '<%= image_path("star.png") %>');
       game.load.spritesheet('hero', '<%= image_path("hero.png") %>', 45, 48);
-      // game.load.spritesheet('enemy', 'baddie.png', 32, 48);
       game.load.spritesheet('enemy', '<%= image_path("space-enemy.png") %>', 42, 30);
       game.load.image( 'play_button', '<%= image_path( "play_button.png" ) %>' );
 
@@ -199,7 +198,6 @@ $( document ).ready( function () {
     };
 
     function hitEnemy (player, enemy) {
-      console.log("Life -1");
       // update life
       life -= 1;
       lifeText.text = "Life: " + life;
@@ -250,12 +248,9 @@ $( document ).ready( function () {
     };
 
     function checkWin () {
-      console.log("checkWin ran");
-      console.log(score);
+
       if (score < 150) {
         // pop up - lose
-
-        console.log("you are loser forever!");
         player.kill();
 
         var modalLose = new gameModal( game );
